@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Student {
+  id        String   @id @default(cuid())
+  firstName String
+  lastName  String
+  email     String?  @unique
+  grades    Grade[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Course {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  grades      Grade[]
+  
+  // Relación a la configuración del esquema de notas que usa este curso
+  gradingConfig   GradingConfig @relation(fields: [gradingConfigId], references: [id])
+  gradingConfigId String
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GradingConfig {
+  id            String   @id @default(cuid())
+  name          String   // Ejemplo: "Escala 1 al 10", "Letras A-F"
+  type          String   // Ej: "NUMERIC", "LETTER"
+  minValue      Float?   // Ej: 1
+  maxValue      Float?   // Ej: 10
+  allowedValues String?  // Ej: "A,B,C,D,F" (separado por comas si es LETTER)
+  
+  courses       Course[]
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Grade {
+  id        String   @id @default(cuid())
+  
+  student   Student  @relation(fields: [studentId], references: [id])
+  studentId String
+  
+  course    Course   @relation(fields: [courseId], references: [id])
+  courseId  String
+  
+  term      String   // Ejemplo: "Periodo 1", "Q1", "Trimestre 1"
+  
+  // Guardamos la nota como String para soportar tanto números ("4.5", "10") como letras ("A")
+  value     String   
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Un estudiante tiene una nota por materia y por periodo (term)
+  @@unique([studentId, courseId, term]) 
+}
