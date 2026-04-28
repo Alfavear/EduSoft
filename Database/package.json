@@ -1,0 +1,8 @@
+{
+  "name": "database",
+  "version": "1.0.0",
+  "dependencies": {
+    "@prisma/client": "5.21.1",
+    "prisma": "5.21.1"
+  }
+}

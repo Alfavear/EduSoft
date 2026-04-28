@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EduSoft - Sistema de Gestión Escolar Inteligente
 
-## Getting Started
+EduSoft es una plataforma moderna diseñada para simplificar la administración académica, el seguimiento de estudiantes y la gestión de calificaciones en instituciones educativas.
 
-First, run the development server:
+## 🚀 Tecnologías Principales
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Frontend:** Next.js 15+ (App Router), React 19, Tailwind CSS (para estructura base) y Vanilla CSS para rediseño vibrante.
+- **Backend:** Next.js Server Actions para lógica de negocio segura y eficiente.
+- **Base de Datos:** PostgreSQL (Neon.tech) con **Prisma ORM**.
+- **Autenticación:** NextAuth.js (Auth.js) con estrategia basada en credenciales personalizadas.
+- **Iconografía:** Lucide React.
+- **Manejo de Datos:** XLSX (SheetJS) para importación/exportación masiva.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🏗️ Estructura del Proyecto
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+El proyecto está organizado como un monorepositorio estructurado:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/Frontend`: Aplicación principal de usuario, interfaces y lógica de servidor.
+- `/Database`: Esquema de Prisma, migraciones y configuración de la base de datos.
+- `/Backend`: (Reservado para microservicios futuros, actualmente integrado en Next.js).
 
-## Learn More
+## ✨ Características Principales
 
-To learn more about Next.js, take a look at the following resources:
+### 👨‍💼 Administrador
+- **Gestión de Usuarios:** CRUD de Estudiantes, Docentes y Administrativos.
+- **Catálogo Académico:** Configuración de Salones (Cursos) y Materias.
+- **Lógica de Evaluación:** Definición de esquemas de calificación dinámica (Numérica o Cualitativa).
+- **Configuración de Periodos:** Gestión de años lectivos con ponderación porcentual personalizada (ej: 30%, 30%, 40%).
+- **Seguridad:** Control de apertura y cierre de periodos para ingreso de notas.
+- **Autorizaciones:** Sistema de aprobación de solicitudes de desbloqueo para docentes.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 👩‍🏫 Docente
+- **Planilla de Notas:** Interfaz intuitiva para el ingreso de calificaciones.
+- **Carga Masiva:** Sistema de descarga de plantillas Excel y carga por lotes.
+- **Seguridad:** Flujo de solicitud de habilitación para periodos cerrados.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 👨‍🎓 Estudiante
+- **Dashboard Personal:** Visualización de cursos activos.
+- **Boletín en Tiempo Real:** Consulta de notas por periodo con cálculo automático de promedio ponderado.
 
-## Deploy on Vercel
+## 🛠️ Instalación y Configuración
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Clonar el repositorio.
+2. Instalar dependencias en la raíz y en la carpeta Frontend:
+   ```bash
+   npm install
+   cd Frontend && npm install
+   ```
+3. Configurar variables de entorno (`.env`):
+   ```env
+   DATABASE_URL="tu-url-de-neon-tech"
+   NEXTAUTH_SECRET="tu-secreto"
+   ```
+4. Sincronizar base de datos:
+   ```bash
+   npx prisma generate --schema=./Database/prisma/schema.prisma
+   ```
+5. Iniciar servidor de desarrollo:
+   ```bash
+   npm run dev
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+Desarrollado con ❤️ para la modernización educativa.

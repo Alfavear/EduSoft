@@ -1,0 +1,209 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../Frontend/node_modules/@prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String   // Para la autenticación
+  role      Role     @default(STUDENT)
+  
+  // Relaciones condicionales (un usuario puede ser estudiante o profesor)
+  studentProfile Student?
+  teacherProfile Teacher?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Student {
+  id        String   @id @default(cuid())
+  firstName String
+  lastName  String
+  
+  // Relación con usuario para login
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique
+  
+  // Relación con el curso principal (Grado)
+  course    Course   @relation(fields: [courseId], references: [id])
+  courseId  String
+  
+  grades    Grade[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Teacher {
+  id        String   @id @default(cuid())
+  firstName String
+  lastName  String
+  
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique
+  
+  assignments TeacherAssignment[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Curso General (Ej: "Décimo A")
+model Course {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  
+  students    Student[]
+  assignments TeacherAssignment[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Materia Genérica (Ej: "Matemáticas")
+model Subject {
+  id          String   @id @default(cuid())
+  name        String
+  
+  // Relación a la configuración del esquema de notas que usa esta materia
+  gradingConfig   GradingConfig @relation(fields: [gradingConfigId], references: [id])
+  gradingConfigId String
+  
+  assignments TeacherAssignment[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Asignación: Un Docente dicta una Materia en un Curso
+model TeacherAssignment {
+  id        String   @id @default(cuid())
+  
+  teacher   Teacher  @relation(fields: [teacherId], references: [id])
+  teacherId String
+  
+  course    Course   @relation(fields: [courseId], references: [id])
+  courseId  String
+  
+  subject   Subject  @relation(fields: [subjectId], references: [id])
+  subjectId String
+  
+  grades         Grade[]
+  accessRequests AccessRequest[]
+
+  @@unique([teacherId, courseId, subjectId]) // Un profesor da una materia específica en un curso específico
+}
+
+model AcademicYear {
+  id        String   @id @default(cuid())
+  name      String   // Ejemplo: "2026-2027"
+  isActive  Boolean  @default(false)
+  
+  periods   AcademicPeriod[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum PeriodStatus {
+  OPEN
+  CLOSED
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model AcademicPeriod {
+  id             String       @id @default(cuid())
+  name           String       // Ejemplo: "Primer Trimestre"
+  weight         Float        // Ejemplo: 30.0 (30%)
+  status         PeriodStatus @default(OPEN)
+  
+  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id])
+  academicYearId String
+  
+  grades         Grade[]
+  accessRequests AccessRequest[]
+  
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model AccessRequest {
+  id           String        @id @default(cuid())
+  
+  assignment   TeacherAssignment @relation(fields: [assignmentId], references: [id])
+  assignmentId String
+  
+  period       AcademicPeriod @relation(fields: [periodId], references: [id])
+  periodId     String
+  
+  reason       String
+  status       RequestStatus @default(PENDING)
+  
+  expiresAt    DateTime?     // Hasta cuándo se le permite subir notas
+  
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+
+model GradingConfig {
+  id            String   @id @default(cuid())
+  name          String   // Ejemplo: "Escala 1 al 10", "Letras A-F"
+  type          String   // Ej: "NUMERIC", "LETTER"
+  minValue      Float?   // Ej: 1
+  maxValue      Float?   // Ej: 10
+  allowedValues String?  // Ej: "A,B,C,D,F"
+  
+  subjects      Subject[]
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Grade {
+  id             String   @id @default(cuid())
+  
+  student        Student  @relation(fields: [studentId], references: [id])
+  studentId      String
+  
+  assignment     TeacherAssignment @relation(fields: [assignmentId], references: [id])
+  assignmentId   String
+  
+  period         AcademicPeriod @relation(fields: [periodId], references: [id])
+  periodId       String
+  
+  // Guardamos la nota como String para soportar números y letras
+  value          String   
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Un estudiante solo tiene una nota por asignación y periodo
+  @@unique([studentId, assignmentId, periodId]) 
+}
+
