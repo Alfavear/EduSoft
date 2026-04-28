@@ -1,9 +1,10 @@
-import { getStudentReport } from "../../actions";
-import { Award, ChevronLeft, BookOpen, School } from "lucide-react";
+import { getStudentReport } from "../../../usuarios/actions";
+import { Award, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 
-export default async function StudentReportPage({ params }: { params: { id: string } }) {
-  const data = await getStudentReport(params.id);
+export default async function StudentReportPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const data = await getStudentReport(id);
 
   if (!data) return <div style={{ padding: '2rem' }}>Estudiante no encontrado.</div>;
 
@@ -75,13 +76,6 @@ export default async function StudentReportPage({ params }: { params: { id: stri
                   </tr>
                 );
               })}
-              {assignments.length === 0 && (
-                <tr>
-                  <td colSpan={periods.length + 2} style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-                    El curso del estudiante no tiene materias asignadas.
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>

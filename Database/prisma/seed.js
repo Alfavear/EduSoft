@@ -4,26 +4,13 @@ const bcrypt = require('bcryptjs');
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("Iniciando Seed...");
-
-  // 1. Limpiar base de datos (Opcional, ten cuidado)
-  // await prisma.grade.deleteMany();
-  // await prisma.accessRequest.deleteMany();
-  // await prisma.teacherAssignment.deleteMany();
-  // await prisma.student.deleteMany();
-  // await prisma.teacher.deleteMany();
-  // await prisma.user.deleteMany();
-  // await prisma.subject.deleteMany();
-  // await prisma.course.deleteMany();
-  // await prisma.academicPeriod.deleteMany();
-  // await prisma.academicYear.deleteMany();
-  // await prisma.gradingConfig.deleteMany();
+  console.log("Iniciando Seed con datos dinámicos...");
 
   const hashedAdminPassword = await bcrypt.hash('admin123', 10);
   const hashedTeacherPassword = await bcrypt.hash('profe123', 10);
   const hashedStudentPassword = await bcrypt.hash('alumno123', 10);
 
-  // 2. Crear Configuración de Notas
+  // Configuración de Notas
   const numericConfig = await prisma.gradingConfig.create({
     data: {
       name: "Escala Numérica 1-5",
@@ -33,7 +20,7 @@ async function main() {
     }
   });
 
-  // 3. Crear Año y Periodos
+  // Año y Periodos
   const year2026 = await prisma.academicYear.create({
     data: {
       name: "Año Lectivo 2026",
@@ -49,47 +36,43 @@ async function main() {
     include: { periods: true }
   });
 
-  // 4. Crear Cursos y Materias
+  const periods = year2026.periods;
+
+  // Cursos
   const curso11A = await prisma.course.create({
     data: { name: "Once A", description: "Grado superior jornada mañana" }
   });
 
-  const fisica = await prisma.subject.create({
-    data: { name: "Física", gradingConfigId: numericConfig.id }
-  });
+  // Materias
+  const subjects = await Promise.all([
+    prisma.subject.create({ data: { name: "Física", gradingConfigId: numericConfig.id } }),
+    prisma.subject.create({ data: { name: "Matemáticas", gradingConfigId: numericConfig.id } }),
+    prisma.subject.create({ data: { name: "Historia", gradingConfigId: numericConfig.id } })
+  ]);
 
-  // 5. Crear Usuarios y Perfiles
-  // Admin
+  // Usuarios
   await prisma.user.upsert({
     where: { username: 'admin.general' },
     update: {},
-    create: {
-      username: 'admin.general',
-      password: hashedAdminPassword,
-      role: 'ADMIN'
-    }
+    create: { username: 'admin.general', password: hashedAdminPassword, role: 'ADMIN' }
   });
 
-  // Docente
-  const teacherUser = await prisma.user.create({
+  const teacher = await prisma.user.create({
     data: {
       username: 'juan.perez',
       password: hashedTeacherPassword,
       role: 'TEACHER',
-      teacherProfile: {
-        create: { firstName: "Juan", lastName: "Pérez" }
-      }
+      teacherProfile: { create: { firstName: "Juan", lastName: "Pérez" } }
     },
     include: { teacherProfile: true }
   });
 
-  // Estudiante
   const studentUser = await prisma.user.create({
     data: {
       username: 'maria.gomez',
       password: hashedStudentPassword,
       role: 'STUDENT',
-      studentProfile: {
+      studentProfile: { 
         create: { 
           firstName: "María", 
           lastName: "Gómez",
@@ -100,19 +83,30 @@ async function main() {
     include: { studentProfile: true }
   });
 
-  // 6. Crear Asignación (Vincular todo)
-  await prisma.teacherAssignment.create({
-    data: {
-      teacherId: teacherUser.teacherProfile.id,
-      courseId: curso11A.id,
-      subjectId: fisica.id
-    }
-  });
+  const student = studentUser.studentProfile;
 
-  console.log("Seed completado con éxito! ✅");
-  console.log("Admin: admin.general / admin123");
-  console.log("Docente: juan.perez / profe123");
-  console.log("Estudiante: maria.gomez / alumno123");
+  // Asignaciones y Notas
+  for (const subject of subjects) {
+    const assignment = await prisma.teacherAssignment.create({
+      data: {
+        teacherId: teacher.teacherProfile.id,
+        courseId: curso11A.id,
+        subjectId: subject.id
+      }
+    });
+
+    // Agregar nota para el primer periodo
+    await prisma.grade.create({
+      data: {
+        studentId: student.id,
+        assignmentId: assignment.id,
+        periodId: periods[0].id,
+        value: (3 + Math.random() * 2).toFixed(1)
+      }
+    });
+  }
+
+  console.log("Seed completado! Maria ahora tiene notas.");
 }
 
 main()

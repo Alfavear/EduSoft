@@ -2,28 +2,26 @@ import { getStudentReport } from "../../../../usuarios/actions";
 import { getSchoolInfo } from "../../../../configuracion/schoolActions";
 import { PrintButton } from "../../../PrintButton";
 
-export default async function BoletinPage({ params }: { params: { studentId: string, periodId: string } }) {
+export default async function BoletinPage({ params }: { params: Promise<{ studentId: string, periodId: string }> }) {
+  const { studentId, periodId } = await params;
 
-  const data = await getStudentReport(params.studentId);
+  const data = await getStudentReport(studentId);
   const school = await getSchoolInfo();
 
-  if (!data) return <div>No se encontró la información del estudiante.</div>;
+  if (!data) return <div style={{ padding: '2rem' }}>No se encontró la información del estudiante.</div>;
 
   const { student, assignments, periods } = data;
-  const currentPeriod = periods.find(p => p.id === params.periodId);
+  const currentPeriod = periods.find(p => p.id === periodId);
 
-  if (!currentPeriod) return <div>Periodo no válido.</div>;
+  if (!currentPeriod) return <div style={{ padding: '2rem' }}>Periodo no válido.</div>;
 
   return (
     <div className="report-container">
-      {/* Print Button - Hidden on print */}
       <div className="no-print" style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'flex-end' }}>
          <PrintButton label="Imprimir Boletín" />
       </div>
 
       <div className="printable-report" style={{ backgroundColor: 'white', padding: '3rem', minHeight: '297mm', width: '210mm', margin: '0 auto', border: '1px solid #eee' }}>
-        
-        {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', borderBottom: '2px solid #333', paddingBottom: '1.5rem', marginBottom: '2rem' }}>
            {school.logo && (
              <img src={school.logo} alt="Logo" style={{ width: '80px', height: '80px', objectFit: 'contain', marginRight: '2rem' }} />
@@ -36,7 +34,6 @@ export default async function BoletinPage({ params }: { params: { studentId: str
            </div>
         </div>
 
-        {/* Student Info */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2rem', fontSize: '0.875rem' }}>
            <div>
               <p><strong>ESTUDIANTE:</strong> {student.firstName} {student.lastName}</p>
@@ -48,7 +45,6 @@ export default async function BoletinPage({ params }: { params: { studentId: str
            </div>
         </div>
 
-        {/* Grades Table */}
         <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '3rem' }}>
            <thead>
               <tr style={{ backgroundColor: '#f3f4f6', border: '1px solid #333' }}>
@@ -77,7 +73,6 @@ export default async function BoletinPage({ params }: { params: { studentId: str
            </tbody>
         </table>
 
-        {/* Footer / Signatures */}
         <div style={{ marginTop: 'auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', paddingTop: '4rem' }}>
            <div style={{ textAlign: 'center', borderTop: '1px solid #333', paddingTop: '0.5rem' }}>
               <p style={{ fontWeight: 'bold' }}>{school.rectorName || "RECTOR(A)"}</p>
@@ -88,7 +83,6 @@ export default async function BoletinPage({ params }: { params: { studentId: str
               <p style={{ fontSize: '0.75rem' }}>Registro y Control</p>
            </div>
         </div>
-
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `

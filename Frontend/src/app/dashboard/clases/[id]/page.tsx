@@ -1,15 +1,16 @@
 import { getAssignmentDetails, getActivePeriods } from "../actions";
 import { GradeTable } from "./GradeTable";
 import Link from "next/link";
-import { ChevronLeft, BookOpen, School } from "lucide-react";
+import { ChevronLeft, School } from "lucide-react";
 
-export default async function DetalleClasePage({ params }: { params: { id: string } }) {
+export default async function DetalleClasePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const [assignment, periods] = await Promise.all([
-    getAssignmentDetails(params.id),
+    getAssignmentDetails(id),
     getActivePeriods()
   ]);
 
-  if (!assignment) return <div>Asignación no encontrada.</div>;
+  if (!assignment) return <div style={{ padding: '2rem' }}>Asignación no encontrada.</div>;
 
   return (
     <div>

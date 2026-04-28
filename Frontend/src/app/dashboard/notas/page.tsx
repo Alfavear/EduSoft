@@ -1,5 +1,7 @@
 import { getStudentGrades } from "./actions";
 import { BookOpen, Award, CheckCircle } from "lucide-react";
+import Link from "next/link";
+
 
 export default async function NotasPage() {
   const data = await getStudentGrades();

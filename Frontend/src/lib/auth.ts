@@ -1,5 +1,7 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { prisma } from "./prisma";
+import bcrypt from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -14,15 +16,27 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        // Mock users
-        if (credentials.username === "admin.general" && credentials.password === "admin123") {
-          return { id: "1", name: "Administrador", email: "admin.general", role: "ADMIN" };
-        }
-        if (credentials.username === "juan.perez" && credentials.password === "profe123") {
-          return { id: "2", name: "Docente Juan", email: "juan.perez", role: "TEACHER" };
-        }
-        if (credentials.username === "maria.gomez" && credentials.password === "alumno123") {
-          return { id: "3", name: "Estudiante Maria", email: "maria.gomez", role: "STUDENT" };
+        const user = await prisma.user.findUnique({
+          where: { username: credentials.username },
+          include: {
+            studentProfile: true,
+            teacherProfile: true
+          }
+        });
+
+        if (user && await bcrypt.compare(credentials.password, user.password)) {
+          const name = user.teacherProfile 
+            ? `${user.teacherProfile.firstName} ${user.teacherProfile.lastName}` 
+            : user.studentProfile 
+            ? `${user.studentProfile.firstName} ${user.studentProfile.lastName}`
+            : user.username;
+
+          return { 
+            id: user.id, 
+            name: name, 
+            email: user.username, 
+            role: user.role 
+          };
         }
 
         return null;
@@ -32,14 +46,16 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = user.role;
+        token.role = (user as any).role;
+        token.id = user.id;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         (session.user as any).role = token.role;
-        (session.user as any).username = session.user.email; // we used email to store username in NextAuth default types
+        (session.user as any).id = token.id;
+        (session.user as any).username = session.user.email;
       }
       return session;
     }

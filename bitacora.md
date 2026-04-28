@@ -82,5 +82,14 @@ Personalización del sistema para reportes oficiales:
 - **Print Optimization:** Estilos CSS `@media print` para asegurar que los documentos se vean perfectos al imprimirse o guardarse como PDF.
 
 ---
-*Estado Actual: Sistema académico base 100% funcional, seguro y con identidad institucional. Listo para expansión a módulos de tesorería y analítica.*
+## [Fase 9] Comunicación Integral y Notificaciones
+Implementación del módulo de comunicación bidireccional entre todos los actores:
+- **Mensajería Interna:** Sistema de buzón (Entrada/Enviados) con soporte para múltiples destinatarios.
+- **Adjuntos:** Habilitación de carga de archivos (Base64) en mensajes para intercambio de material o excusas.
+- **Mensajería Masiva:** Los docentes pueden enviar mensajes a toda su clase con un clic, y administradores a todo el personal.
+- **Centro de Notificaciones:** Notificaciones en tiempo real en la barra superior con contador de mensajes no leídos y alertas del sistema.
+- **Autenticación Robusta:** Migración de sesión de "Mock" a validación real contra base de datos (NextAuth + Prisma + Bcrypt).
+
+---
+*Estado Actual: Sistema académico estable con módulo de comunicación avanzado y reportes oficiales. Próximo paso: Módulo de Tesorería y Contabilidad.*
 

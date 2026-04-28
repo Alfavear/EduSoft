@@ -1,6 +1,8 @@
 import { getUsers, getCourses } from "./actions";
 import { UserForm } from "./UserForm";
 import { Users as UsersIcon, Shield, GraduationCap, Briefcase, Trash2 } from "lucide-react";
+import Link from "next/link";
+
 
 export default async function UsuariosPage() {
   const [users, courses] = await Promise.all([getUsers(), getCourses()]);

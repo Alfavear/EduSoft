@@ -4,6 +4,8 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 import Link from "next/link";
+import { NotificationBell } from "../components/NotificationBell";
+
 import { 
   LayoutDashboard, 
   Users, 
@@ -12,8 +14,11 @@ import {
   Settings, 
   LogOut,
   GraduationCap,
-  Plus
+  Plus,
+  Mail,
+  Bell
 } from "lucide-react";
+
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
@@ -95,6 +100,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <span>Calendario</span>
           </Link>
 
+          <Link href="/dashboard/mensajeria" className={`nav-item ${pathname.includes('/mensajeria') ? 'active' : ''}`}>
+            <Mail size={20} />
+            <span>Mensajería</span>
+          </Link>
+
+
 
 
         </nav>
@@ -120,23 +131,28 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div style={{ fontWeight: '500' }}>
             {/* Opcional: breadcrumbs o título de sección */}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-              <span style={{ fontWeight: '600', fontSize: '0.875rem' }}>{session.user.name}</span>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{(session.user as any).username}</span>
-            </div>
-            <div style={{ 
-              backgroundColor: role === 'ADMIN' ? 'var(--color-purple)' : role === 'TEACHER' ? 'var(--color-teal)' : 'var(--color-primary)', 
-              color: 'white', 
-              padding: '0.25rem 0.75rem', 
-              borderRadius: '2rem', 
-              fontSize: '0.75rem', 
-              fontWeight: 'bold' 
-            }}>
-              {role}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+            <NotificationBell />
+            <div style={{ width: '1px', height: '24px', backgroundColor: 'var(--border-light)' }}></div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                <span style={{ fontWeight: '600', fontSize: '0.875rem' }}>{session.user.name}</span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{(session.user as any).username}</span>
+              </div>
+              <div style={{ 
+                backgroundColor: role === 'ADMIN' ? 'var(--color-purple)' : role === 'TEACHER' ? 'var(--color-teal)' : 'var(--color-primary)', 
+                color: 'white', 
+                padding: '0.25rem 0.75rem', 
+                borderRadius: '2rem', 
+                fontSize: '0.75rem', 
+                fontWeight: 'bold' 
+              }}>
+                {role}
+              </div>
             </div>
           </div>
         </header>
+
 
         {/* Content */}
         <main className="app-content">
