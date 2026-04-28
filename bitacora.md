@@ -74,4 +74,13 @@ Implementación de flujo de trabajo para el cierre de notas:
 - **Aprobación Granular:** El Admin habilita el acceso por 24 horas para casos específicos.
 
 ---
-*Estado Actual: Sistema académico base 100% funcional y seguro.*
+## [Fase 8] Identidad Institucional e Informes
+Personalización del sistema para reportes oficiales:
+- **Branding Institucional:** Nuevo módulo en Configuración para nombre, NIT, dirección y Logo (Base64).
+- **Visor de Boletines:** Los estudiantes pueden imprimir su reporte por periodo con firma de rectoría.
+- **Planilla Consolidada:** Los docentes pueden imprimir el informe completo de notas de todos sus estudiantes por materia.
+- **Print Optimization:** Estilos CSS `@media print` para asegurar que los documentos se vean perfectos al imprimirse o guardarse como PDF.
+
+---
+*Estado Actual: Sistema académico base 100% funcional, seguro y con identidad institucional. Listo para expansión a módulos de tesorería y analítica.*
+

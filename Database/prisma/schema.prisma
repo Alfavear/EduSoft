@@ -170,6 +170,20 @@ model AccessRequest {
   updatedAt    DateTime      @updatedAt
 }
 
+model SchoolInfo {
+  id          String   @id @default("institutional-info")
+  name        String   @default("Nombre del Colegio")
+  nit         String?
+  address     String?
+  phone       String?
+  email       String?
+  rectorName  String?
+  logo        String?  @db.Text // Base64 string
+  
+  updatedAt   DateTime @updatedAt
+}
+
+
 
 model GradingConfig {
   id            String   @id @default(cuid())

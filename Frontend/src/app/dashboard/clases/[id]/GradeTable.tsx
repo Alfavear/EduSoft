@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { saveGrades } from "./actions";
-import { Save, CheckCircle, AlertCircle, Download, FileUp } from "lucide-react";
+import { saveGrades, createAccessRequest } from "../actions";
+import { Save, CheckCircle, AlertCircle, Download, FileUp, Printer } from "lucide-react";
+import Link from "next/link";
 import * as XLSX from "xlsx";
 
 export function GradeTable({ assignment, periods }: { assignment: any, periods: any[] }) {
@@ -158,6 +159,9 @@ export function GradeTable({ assignment, periods }: { assignment: any, periods: 
             <button onClick={() => fileInputRef.current?.click()} className="btn-secondary" style={{ padding: '0.625rem 1rem', fontSize: '0.875rem' }} disabled={!canEdit}>
               <FileUp size={18} /> Cargar Excel
             </button>
+            <Link href={`/dashboard/reportes/planilla/${assignment.id}`} target="_blank" className="btn-secondary" style={{ padding: '0.625rem 1rem', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Printer size={18} /> Imprimir Planilla
+            </Link>
             <input 
               type="file" 
               ref={fileInputRef} 

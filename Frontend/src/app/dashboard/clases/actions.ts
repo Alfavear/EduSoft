@@ -50,8 +50,19 @@ export async function getAssignmentDetails(assignmentId: string) {
   const assignment = await prisma.teacherAssignment.findUnique({
     where: { id: assignmentId },
     include: {
-      course: { include: { students: true } },
-      subject: { include: { gradingConfig: true } },
+      course: { 
+        include: { 
+          students: true 
+        } 
+      },
+      subject: { 
+        include: { 
+          gradingConfig: true 
+        } 
+      },
+      grades: {
+        include: { period: true }
+      },
       accessRequests: {
         where: { status: 'APPROVED' },
         orderBy: { createdAt: 'desc' },
@@ -59,6 +70,7 @@ export async function getAssignmentDetails(assignmentId: string) {
       }
     }
   });
+
 
   return assignment;
 }

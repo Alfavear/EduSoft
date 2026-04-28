@@ -58,7 +58,12 @@ export default async function NotasPage() {
                       return (
                         <td key={p.id} style={{ padding: '1rem', textAlign: 'center' }}>
                           {grade ? (
-                            <span style={{ fontWeight: '500' }}>{grade.value}</span>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
+                              <span style={{ fontWeight: '500' }}>{grade.value}</span>
+                              <Link href={`/dashboard/reportes/boletin/${student.id}/${p.id}`} target="_blank" style={{ fontSize: '0.625rem', color: 'var(--color-primary)', textDecoration: 'underline' }}>
+                                Ver Boletín
+                              </Link>
+                            </div>
                           ) : (
                             <span style={{ color: 'var(--border-light)' }}>-</span>
                           )}

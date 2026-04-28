@@ -1,10 +1,13 @@
 import { getAcademicYears, togglePeriodStatus, toggleYearStatus } from "./actions";
+import { getSchoolInfo } from "./schoolActions";
 import { ConfigForm } from "./ConfigForm";
-import { Calendar, Lock, Unlock, CheckCircle2, Circle } from "lucide-react";
+import { SchoolInfoForm } from "./SchoolInfoForm";
+import { Calendar, Lock, Unlock, CheckCircle2, Circle, Settings2, ShieldCheck } from "lucide-react";
 import { StatusToggle } from "./StatusToggle";
 
 export default async function ConfiguracionPage() {
   const years = await getAcademicYears();
+  const schoolInfo = await getSchoolInfo();
 
   return (
     <div>
@@ -13,7 +16,10 @@ export default async function ConfiguracionPage() {
         <p style={{ color: 'var(--text-muted)' }}>Define la estructura del año escolar y controla el cierre de periodos</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '400px 1fr', gap: '2rem', alignItems: 'start' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        <SchoolInfoForm initialData={schoolInfo} />
+
+        <div style={{ display: 'grid', gridTemplateColumns: '400px 1fr', gap: '2rem', alignItems: 'start' }}>
         <ConfigForm />
 
         <div className="card" style={{ padding: '2rem' }}>
@@ -58,6 +64,8 @@ export default async function ConfiguracionPage() {
           </div>
         </div>
       </div>
+      </div>
     </div>
   );
 }
+
