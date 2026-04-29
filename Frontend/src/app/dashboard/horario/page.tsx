@@ -1,9 +1,10 @@
 import { getWeeklySchedule } from "./actions";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { Clock, BookOpen, User as UserIcon, Calendar } from "lucide-react";
+import { Calendar } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import ScheduleFilters from "./ScheduleFilters";
+import { Suspense } from "react";
 
 export default async function SchedulePage({ searchParams }: { searchParams: Promise<{ courseId?: string, teacherId?: string }> }) {
   const session = await getServerSession(authOptions);
@@ -60,7 +61,9 @@ export default async function SchedulePage({ searchParams }: { searchParams: Pro
       </div>
 
       {role === "ADMIN" && (
-        <ScheduleFilters courses={courses} teachers={teachers} />
+        <Suspense fallback={<div style={{ padding: '1rem', color: 'var(--text-muted)' }}>Cargando filtros...</div>}>
+          <ScheduleFilters courses={courses} teachers={teachers} />
+        </Suspense>
       )}
 
       {(schedule.length > 0 || role !== "ADMIN") ? (

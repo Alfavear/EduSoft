@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ResetPasswordButton } from "./ResetPasswordButton";
 import { UserFilters } from "./UserFilters";
 import { Pagination } from "./Pagination";
+import { Suspense } from "react";
 
 export default async function UsuariosPage({ 
   searchParams 
@@ -42,7 +43,9 @@ export default async function UsuariosPage({
             </h2>
           </div>
 
-          <UserFilters />
+          <Suspense fallback={<div style={{ height: '52px' }} />}>
+            <UserFilters />
+          </Suspense>
 
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -111,7 +114,9 @@ export default async function UsuariosPage({
             </table>
           </div>
 
-          <Pagination currentPage={currentPage} totalPages={totalPages} />
+          <Suspense fallback={null}>
+            <Pagination currentPage={currentPage} totalPages={totalPages} />
+          </Suspense>
         </div>
       </div>
     </div>
