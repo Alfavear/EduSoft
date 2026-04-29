@@ -84,3 +84,25 @@ export async function getConsolidatedCourseReport(courseId: string) {
     data: reportData
   };
 }
+
+export async function getStudentsForReports() {
+  return await prisma.student.findMany({
+    include: { course: true },
+    orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }]
+  });
+}
+
+export async function getActivePeriodsForReports() {
+  const year = await prisma.academicYear.findFirst({
+    where: { isActive: true },
+    include: { periods: { orderBy: { createdAt: 'asc' } } }
+  });
+  return year?.periods || [];
+}
+
+export async function getAssignmentsForReports() {
+  return await prisma.teacherAssignment.findMany({
+    include: { teacher: true, course: true, subject: true },
+    orderBy: { courseId: 'asc' }
+  });
+}
