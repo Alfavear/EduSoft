@@ -12,7 +12,7 @@ export default async function SchedulePage({ searchParams }: { searchParams: Pro
   const { courseId, teacherId } = await searchParams;
   const role = session.user.role;
 
-  let schedule = [];
+  let schedule: any[] = [];
   let filterTitle = "Tu Horario Semanal";
 
   // Admin logic

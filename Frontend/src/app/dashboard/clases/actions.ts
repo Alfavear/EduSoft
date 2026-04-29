@@ -50,6 +50,7 @@ export async function getAssignmentDetails(assignmentId: string) {
   const assignment = await prisma.teacherAssignment.findUnique({
     where: { id: assignmentId },
     include: {
+      teacher: true,
       course: { 
         include: { 
           students: true 
