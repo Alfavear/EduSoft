@@ -6,7 +6,7 @@ import { BookOpen, School, Settings, Plus, Save, Trash2, CheckCircle } from "luc
 
 export function AcademicTabs({ initialData }: { initialData: any }) {
   const [activeTab, setActiveTab] = useState("cursos");
-  const { courses, subjects, gradingConfigs } = initialData;
+  const { courses, subjects, gradingConfigs, teachers } = initialData;
 
   return (
     <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
@@ -50,7 +50,7 @@ export function AcademicTabs({ initialData }: { initialData: any }) {
       </div>
 
       <div style={{ padding: '2rem' }}>
-        {activeTab === "cursos" && <CoursesTab courses={courses} />}
+        {activeTab === "cursos" && <CoursesTab courses={courses} teachers={teachers} />}
         {activeTab === "materias" && <SubjectsTab subjects={subjects} gradingConfigs={gradingConfigs} />}
         {activeTab === "esquemas" && <GradingTab gradingConfigs={gradingConfigs} />}
       </div>
@@ -58,14 +58,15 @@ export function AcademicTabs({ initialData }: { initialData: any }) {
   );
 }
 
-function CoursesTab({ courses }: { courses: any[] }) {
+function CoursesTab({ courses, teachers }: { courses: any[], teachers: any[] }) {
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
+  const [directorId, setDirectorId] = useState("");
 
   const handleAdd = async () => {
     if (!name) return;
-    await createCourse({ name, description: desc });
-    setName(""); setDesc("");
+    await createCourse({ name, description: desc, directorId });
+    setName(""); setDesc(""); setDirectorId("");
   };
 
   return (
@@ -78,8 +79,15 @@ function CoursesTab({ courses }: { courses: any[] }) {
               <div key={c.id} className="card" style={{ padding: '1rem', borderLeft: '4px solid var(--color-primary)' }}>
                 <h4 style={{ fontWeight: 'bold' }}>{c.name}</h4>
                 <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{c.description || "Sin descripción"}</p>
-                <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: 'var(--color-primary)', fontWeight: 'bold' }}>
-                  {c._count.students} Alumnos
+                <div style={{ marginTop: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-primary)', fontWeight: 'bold' }}>
+                    {c._count.students} Alumnos
+                  </div>
+                  {c.director && (
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                      Dir: {c.director.firstName} {c.director.lastName}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -93,8 +101,18 @@ function CoursesTab({ courses }: { courses: any[] }) {
           />
           <textarea 
             placeholder="Descripción..." value={desc} onChange={e => setDesc(e.target.value)}
-            style={{ width: '100%', padding: '0.625rem', borderRadius: 'var(--radius)', border: '1px solid var(--border-light)', marginBottom: '1rem', height: '80px' }} 
+            style={{ width: '100%', padding: '0.625rem', borderRadius: 'var(--radius)', border: '1px solid var(--border-light)', marginBottom: '0.5rem', height: '80px' }} 
           />
+          <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 'bold', marginBottom: '0.25rem', color: 'var(--text-muted)' }}>Director de Grupo</label>
+          <select 
+            value={directorId} onChange={e => setDirectorId(e.target.value)}
+            style={{ width: '100%', padding: '0.625rem', borderRadius: 'var(--radius)', border: '1px solid var(--border-light)', marginBottom: '1rem', backgroundColor: 'white' }}
+          >
+            <option value="">Seleccionar director...</option>
+            {teachers.map(t => (
+              <option key={t.id} value={t.id}>{t.firstName} {t.lastName}</option>
+            ))}
+          </select>
           <button className="btn-primary" style={{ width: '100%' }} onClick={handleAdd}><Plus size={18}/> Crear Salón</button>
         </div>
       </div>

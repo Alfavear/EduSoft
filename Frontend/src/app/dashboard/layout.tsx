@@ -16,7 +16,12 @@ import {
   GraduationCap,
   Plus,
   Mail,
-  Bell
+  Bell,
+  FileText,
+  UserCheck,
+  ClipboardList,
+  Star,
+  CheckCircle
 } from "lucide-react";
 
 
@@ -76,22 +81,36 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
           {role === "ADMIN" && (
             <Link href="/dashboard/asignaciones" className={`nav-item ${pathname.includes('/asignaciones') ? 'active' : ''}`}>
-              <Plus size={20} />
+              <UserCheck size={20} />
               <span>Asignaciones</span>
             </Link>
           )}
 
           {role === "STUDENT" && (
             <Link href="/dashboard/notas" className={`nav-item ${pathname.includes('/notas') ? 'active' : ''}`}>
-              <Plus size={20} />
+              <Star size={20} />
               <span>Mis Notas</span>
             </Link>
           )}
 
           {role === "ADMIN" && (
             <Link href="/dashboard/admin/solicitudes" className={`nav-item ${pathname.includes('/solicitudes') ? 'active' : ''}`}>
-              <Plus size={20} />
+              <ClipboardList size={20} />
               <span>Solicitudes</span>
+            </Link>
+          )}
+
+          {role === "ADMIN" && (
+            <Link href="/dashboard/reportes" className={`nav-item ${pathname.includes('/reportes') ? 'active' : ''}`}>
+              <FileText size={20} />
+              <span>Reportes</span>
+            </Link>
+          )}
+
+          {(role === "ADMIN" || role === "TEACHER") && (
+            <Link href="/dashboard/asistencia" className={`nav-item ${pathname.includes('/asistencia') ? 'active' : ''}`}>
+              <CheckCircle size={20} />
+              <span>Asistencias</span>
             </Link>
           )}
 
@@ -134,7 +153,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
             <NotificationBell />
             <div style={{ width: '1px', height: '24px', backgroundColor: 'var(--border-light)' }}></div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <a href="/dashboard/perfil" style={{ display: 'flex', alignItems: 'center', gap: '1rem', textDecoration: 'none', color: 'inherit' }}>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                 <span style={{ fontWeight: '600', fontSize: '0.875rem' }}>{session.user.name}</span>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{(session.user as any).username}</span>
@@ -149,7 +168,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               }}>
                 {role}
               </div>
-            </div>
+            </a>
           </div>
         </header>
 

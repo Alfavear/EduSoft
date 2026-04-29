@@ -15,46 +15,64 @@ model User {
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   username         String         @unique
+  receivedMessages Message[]      @relation("ReceivedMessages")
+  sentMessages     Message[]      @relation("SentMessages")
+  notifications    Notification[]
   studentProfile   Student?
   teacherProfile   Teacher?
-  sentMessages     Message[]      @relation("SentMessages")
-  receivedMessages Message[]      @relation("ReceivedMessages")
-  notifications    Notification[]
 }
 
-
 model Student {
-  id        String   @id @default(cuid())
-  firstName String
-  lastName  String
-  userId    String   @unique
-  courseId  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  grades    Grade[]
-  course    Course   @relation(fields: [courseId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  id            String       @id @default(cuid())
+  firstName     String
+  lastName      String
+  documentId    String?
+  guardianName  String       @default("No registrado")
+  guardianPhone String       @default("0000000000")
+  guardianEmail String?
+  address       String?
+  bloodType     String?
+  birthDate     DateTime?
+  userId        String       @unique
+  courseId      String
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  attendances   Attendance[]
+  grades        Grade[]
+  course        Course       @relation(fields: [courseId], references: [id])
+  user          User         @relation(fields: [userId], references: [id])
 }
 
 model Teacher {
-  id          String              @id @default(cuid())
-  firstName   String
-  lastName    String
-  userId      String              @unique
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
-  user        User                @relation(fields: [userId], references: [id])
-  assignments TeacherAssignment[]
+  id              String              @id @default(cuid())
+  firstName       String
+  lastName        String
+  documentId      String?
+  phone           String?
+  address         String?
+  specialization  String?
+  userId          String              @unique
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  attendances     Attendance[]
+  attendanceReqs  AttendanceRequest[]
+  directedCourses Course[]            @relation("CourseDirector")
+  user            User                @relation(fields: [userId], references: [id])
+  assignments     TeacherAssignment[]
 }
 
 model Course {
-  id          String              @id @default(cuid())
-  name        String
-  description String?
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
-  students    Student[]
-  assignments TeacherAssignment[]
+  id             String              @id @default(cuid())
+  name           String
+  description    String?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  directorId     String?
+  attendances    Attendance[]
+  attendanceReqs AttendanceRequest[]
+  director       Teacher?            @relation("CourseDirector", fields: [directorId], references: [id])
+  students       Student[]
+  assignments    TeacherAssignment[]
 }
 
 model Subject {
@@ -117,15 +135,46 @@ model AccessRequest {
 }
 
 model SchoolInfo {
-  id         String   @id @default("institutional-info")
-  name       String   @default("Nombre del Colegio")
-  nit        String?
-  address    String?
-  phone      String?
-  email      String?
-  rectorName String?
-  logo       String?
-  updatedAt  DateTime @updatedAt
+  id                  String   @id @default("institutional-info")
+  name                String   @default("Nombre del Colegio")
+  nit                 String?
+  address             String?
+  phone               String?
+  email               String?
+  rectorName          String?
+  logo                String?
+  updatedAt           DateTime @updatedAt
+  alertThreshold      Float    @default(3.0)
+  attendanceLimitDays Int      @default(1)
+}
+
+model Attendance {
+  id        String           @id @default(cuid())
+  studentId String
+  courseId  String
+  date      DateTime
+  status    AttendanceStatus
+  teacherId String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  course    Course           @relation(fields: [courseId], references: [id])
+  student   Student          @relation(fields: [studentId], references: [id])
+  teacher   Teacher?         @relation(fields: [teacherId], references: [id])
+
+  @@unique([studentId, courseId, date])
+}
+
+model AttendanceRequest {
+  id        String        @id @default(cuid())
+  teacherId String
+  courseId  String
+  date      DateTime
+  reason    String
+  status    RequestStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  course    Course        @relation(fields: [courseId], references: [id])
+  teacher   Teacher       @relation(fields: [teacherId], references: [id])
 }
 
 model GradingConfig {
@@ -155,41 +204,24 @@ model Grade {
   @@unique([studentId, assignmentId, periodId])
 }
 
-enum Role {
-  ADMIN
-  TEACHER
-  STUDENT
-}
-
-enum PeriodStatus {
-  OPEN
-  CLOSED
-}
-
-enum RequestStatus {
-  PENDING
-  APPROVED
-  REJECTED
-}
-
 model Message {
   id          String       @id @default(cuid())
   subject     String
-  content     String       @db.Text
+  content     String
   senderId    String
   receiverId  String
   isRead      Boolean      @default(false)
   createdAt   DateTime     @default(now())
   attachments Attachment[]
-  sender      User         @relation("SentMessages", fields: [senderId], references: [id])
   receiver    User         @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  sender      User         @relation("SentMessages", fields: [senderId], references: [id])
 }
 
 model Attachment {
   id        String  @id @default(cuid())
   name      String
   type      String
-  data      String  @db.Text
+  data      String
   messageId String
   message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
 }
@@ -206,3 +238,26 @@ model Notification {
   user      User     @relation(fields: [userId], references: [id])
 }
 
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  JUSTIFIED
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum PeriodStatus {
+  OPEN
+  CLOSED
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}

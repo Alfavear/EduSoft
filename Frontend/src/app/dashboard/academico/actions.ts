@@ -3,10 +3,14 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-export async function createCourse(data: { name: string, description?: string }) {
+export async function createCourse(data: { name: string, description?: string, directorId?: string }) {
   try {
     const course = await prisma.course.create({
-      data
+      data: {
+        name: data.name,
+        description: data.description,
+        directorId: data.directorId || undefined
+      }
     });
     revalidatePath("/dashboard/academico");
     revalidatePath("/dashboard/usuarios");
@@ -31,12 +35,18 @@ export async function createSubject(data: { name: string, gradingConfigId: strin
 }
 
 export async function getAcademicData() {
-  const [courses, subjects, gradingConfigs] = await Promise.all([
-    prisma.course.findMany({ include: { _count: { select: { students: true } } } }),
+  const [courses, subjects, gradingConfigs, teachers] = await Promise.all([
+    prisma.course.findMany({ 
+      include: { 
+        _count: { select: { students: true } },
+        director: true
+      } 
+    }),
     prisma.subject.findMany({ include: { gradingConfig: true } }),
-    prisma.gradingConfig.findMany()
+    prisma.gradingConfig.findMany(),
+    prisma.teacher.findMany()
   ]);
-  return { courses, subjects, gradingConfigs };
+  return { courses, subjects, gradingConfigs, teachers };
 }
 
 export async function createGradingConfig(data: { name: string, type: string, minValue?: number, maxValue?: number, allowedValues?: string }) {

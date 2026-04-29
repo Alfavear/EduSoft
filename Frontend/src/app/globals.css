@@ -94,6 +94,15 @@ a {
   overflow: hidden;
 }
 
+.interactive-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.interactive-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
 /* Widget Estadístico Sólido (Kinderpedia style) */
 .widget-stat {
   padding: 1.5rem;

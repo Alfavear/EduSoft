@@ -4,6 +4,8 @@ import { Users as UsersIcon, Shield, GraduationCap, Briefcase, Trash2 } from "lu
 import Link from "next/link";
 
 
+import { ResetPasswordButton } from "./ResetPasswordButton";
+
 export default async function UsuariosPage() {
   const [users, courses] = await Promise.all([getUsers(), getCourses()]);
 
@@ -14,7 +16,7 @@ export default async function UsuariosPage() {
         <p style={{ color: 'var(--text-muted)' }}>Crea y administra cuentas de estudiantes, docentes y administrativos</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '350px 1fr', gap: '2rem', alignItems: 'start' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
         <UserForm courses={courses} />
 
         <div className="card" style={{ padding: '2rem' }}>
@@ -64,13 +66,16 @@ export default async function UsuariosPage() {
                     <td style={{ padding: '1rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
                       {user.role === "STUDENT" ? user.studentProfile?.course.name : "-"}
                     </td>
-                    <td style={{ padding: '1rem', textAlign: 'right', display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                    <td style={{ padding: '1rem', textAlign: 'right', display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', alignItems: 'center' }}>
                       {user.role === "STUDENT" && (
                         <Link href={`/dashboard/admin/estudiantes/${user.studentProfile?.id}`} className="btn-secondary" style={{ padding: '0.4rem 0.6rem', fontSize: '0.75rem' }}>
                           Ver Notas
                         </Link>
                       )}
-                      <button style={{ color: 'var(--color-danger)', background: 'none', border: 'none', cursor: 'pointer' }}>
+                      {user.role !== "ADMIN" && (
+                        <ResetPasswordButton userId={user.id} />
+                      )}
+                      <button style={{ color: 'var(--color-danger)', background: 'none', border: 'none', cursor: 'pointer' }} title="Eliminar">
                         <Trash2 size={18} />
                       </button>
                     </td>

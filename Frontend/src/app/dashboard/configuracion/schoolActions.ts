@@ -19,12 +19,17 @@ export async function getSchoolInfo() {
 
 
 export async function updateSchoolInfo(data: any) {
-
   try {
+    const formattedData = {
+      ...data,
+      attendanceLimitDays: data.attendanceLimitDays ? parseInt(data.attendanceLimitDays) : 1,
+      alertThreshold: data.alertThreshold ? parseFloat(data.alertThreshold) : 3.0
+    };
+
     await prisma.schoolInfo.upsert({
       where: { id: "institutional-info" },
-      update: data,
-      create: { ...data, id: "institutional-info" }
+      update: formattedData,
+      create: { ...formattedData, id: "institutional-info" }
     });
     revalidatePath("/dashboard/configuracion");
     return { success: true };

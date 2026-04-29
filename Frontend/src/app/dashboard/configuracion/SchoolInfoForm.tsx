@@ -125,6 +125,22 @@ export function SchoolInfoForm({ initialData }: { initialData: any }) {
               </label>
               <input name="rectorName" value={formData.rectorName || ""} onChange={handleChange} className="input-field" placeholder="Nombre completo" style={{ width: '100%' }} />
             </div>
+
+            <div className="form-group" style={{ gridColumn: 'span 2', marginTop: '1.5rem', padding: '1.5rem', backgroundColor: 'var(--bg-app)', borderRadius: '15px', border: '1px solid var(--border-light)' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: '700', marginBottom: '1.5rem', color: 'var(--text-main)', borderBottom: '1px solid var(--border-light)', paddingBottom: '0.75rem' }}>Parámetros del Sistema</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>Límite de Días para Asistencia</label>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>Días permitidos hacia atrás para registrar asistencia sin solicitud.</p>
+                  <input type="number" name="attendanceLimitDays" value={formData.attendanceLimitDays || 1} onChange={handleChange} className="input-field" style={{ width: '100%' }} min="0" />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>Umbral de Alerta Académica</label>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>Calificación mínima antes de disparar una alerta temprana (Promedio).</p>
+                  <input type="number" step="0.1" name="alertThreshold" value={formData.alertThreshold || 3.0} onChange={handleChange} className="input-field" style={{ width: '100%' }} min="0" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
