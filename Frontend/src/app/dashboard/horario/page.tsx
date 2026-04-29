@@ -5,10 +5,11 @@ import { Calendar } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import ScheduleFilters from "./ScheduleFilters";
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 
 export default async function SchedulePage({ searchParams }: { searchParams: Promise<{ courseId?: string, teacherId?: string }> }) {
   const session = await getServerSession(authOptions);
-  if (!session?.user) return null;
+  if (!session?.user) redirect("/login");
 
   const { courseId, teacherId } = await searchParams;
   const role = session.user.role;
