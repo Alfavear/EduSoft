@@ -21,7 +21,8 @@ import {
   UserCheck,
   ClipboardList,
   Star,
-  CheckCircle
+  CheckCircle,
+  Clock
 } from "lucide-react";
 
 
@@ -117,6 +118,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Link href="/dashboard/calendario" className={`nav-item ${pathname.includes('/calendario') ? 'active' : ''}`}>
             <Calendar size={20} />
             <span>Calendario</span>
+          </Link>
+
+          <Link href="/dashboard/horario" className={`nav-item ${pathname.includes('/horario') ? 'active' : ''}`}>
+            <Clock size={20} />
+            <span>Horario</span>
           </Link>
 
           <Link href="/dashboard/mensajeria" className={`nav-item ${pathname.includes('/mensajeria') ? 'active' : ''}`}>

@@ -1,31 +1,39 @@
-import { Calendar as CalendarIcon, Clock } from "lucide-react";
+import { getEvents } from "./actions";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { prisma } from "@/lib/prisma";
+import EventManager from "./EventManager";
+import CalendarGrid from "./CalendarGrid";
 
-export default function CalendarioPage() {
+export default async function CalendarPage() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) return null;
+
+  let courseId = undefined;
+  if (session.user.role === "STUDENT") {
+    const student = await prisma.student.findUnique({ where: { userId: session.user.id } });
+    courseId = student?.courseId;
+  }
+
+  const events = await getEvents({ role: session.user.role as any, courseId });
+  const isAdmin = session?.user?.role === "ADMIN";
+  const isTeacher = session?.user?.role === "TEACHER";
+
   return (
     <div className="container">
-      <header style={{ marginBottom: "2rem" }}>
-        <h1 style={{ fontSize: "1.875rem", fontWeight: "bold", color: "var(--text-dark)" }}>
-          Calendario Institucional
-        </h1>
-        <p style={{ color: "var(--text-muted)", marginTop: "0.5rem" }}>
-          Cronograma de actividades y eventos académicos.
-        </p>
-      </header>
-
-      <div className="card" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "4rem 2rem", textAlign: "center", gap: "1.5rem" }}>
-        <div style={{ backgroundColor: "rgba(245, 158, 11, 0.1)", padding: "1.5rem", borderRadius: "50%", color: "var(--color-warning)" }}>
-          <Clock size={48} />
-        </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <div>
-          <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", marginBottom: "0.5rem" }}>Módulo en Construcción</h2>
-          <p style={{ color: "var(--text-muted)", maxWidth: "500px", margin: "0 auto" }}>
-            Estamos trabajando para integrar un calendario interactivo que permitirá gestionar eventos, reuniones, entregas de notas y feriados escolares.
-          </p>
+          <h1 style={{ fontSize: '2rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <CalendarIcon size={32} color="var(--color-primary)" />
+            Calendario Escolar
+          </h1>
+          <p style={{ color: 'var(--text-muted)' }}>Eventos institucionales y actividades de curso.</p>
         </div>
-        <button className="btn btn-primary" style={{ opacity: 0.5, cursor: "not-allowed" }}>
-          Próximamente
-        </button>
+        {(isAdmin || isTeacher) && <EventManager />}
       </div>
+
+      <CalendarGrid initialEvents={events} />
     </div>
   );
 }

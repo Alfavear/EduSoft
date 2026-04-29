@@ -2,17 +2,32 @@ import { getUsers, getCourses } from "./actions";
 import { UserForm } from "./UserForm";
 import { Users as UsersIcon, Shield, GraduationCap, Briefcase, Trash2 } from "lucide-react";
 import Link from "next/link";
-
-
 import { ResetPasswordButton } from "./ResetPasswordButton";
+import { UserFilters } from "./UserFilters";
+import { Pagination } from "./Pagination";
 
-export default async function UsuariosPage() {
-  const [users, courses] = await Promise.all([getUsers(), getCourses()]);
+export default async function UsuariosPage({ 
+  searchParams 
+}: { 
+  searchParams: Promise<{ search?: string, role?: string, page?: string }> 
+}) {
+  const { search, role, page } = await searchParams;
+  const currentPage = parseInt(page || "1");
+  
+  const [{ users, totalCount, totalPages }, courses] = await Promise.all([
+    getUsers({ 
+      search, 
+      role, 
+      page: currentPage, 
+      pageSize: 15 
+    }), 
+    getCourses()
+  ]);
 
   return (
-    <div>
+    <div className="container">
       <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: 'var(--text-main)' }}>Gestión de Usuarios</h1>
+        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--text-main)' }}>Gestión de Usuarios</h1>
         <p style={{ color: 'var(--text-muted)' }}>Crea y administra cuentas de estudiantes, docentes y administrativos</p>
       </div>
 
@@ -20,10 +35,14 @@ export default async function UsuariosPage() {
         <UserForm courses={courses} />
 
         <div className="card" style={{ padding: '2rem' }}>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <UsersIcon color="var(--color-purple)" />
-            Listado de Usuarios
-          </h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <UsersIcon color="var(--color-purple)" />
+              Listado de Usuarios ({totalCount})
+            </h2>
+          </div>
+
+          <UserFilters />
 
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -84,13 +103,15 @@ export default async function UsuariosPage() {
                 {users.length === 0 && (
                   <tr>
                     <td colSpan={5} style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-                      No hay usuarios registrados.
+                      No se encontraron usuarios con los filtros aplicados.
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
+
+          <Pagination currentPage={currentPage} totalPages={totalPages} />
         </div>
       </div>
     </div>

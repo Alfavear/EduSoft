@@ -95,6 +95,7 @@ model TeacherAssignment {
   course         Course          @relation(fields: [courseId], references: [id])
   subject        Subject         @relation(fields: [subjectId], references: [id])
   teacher        Teacher         @relation(fields: [teacherId], references: [id])
+  scheduleItems  ScheduleItem[]
 
   @@unique([teacherId, courseId, subjectId])
 }
@@ -260,4 +261,49 @@ enum RequestStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+model CalendarEvent {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  startDate   DateTime
+  endDate     DateTime?
+  type        EventType @default(OTHER)
+  isGlobal    Boolean   @default(true)
+  targetRole  Role?     // If null, visible to all in the scope
+  courseId    String?
+  creatorId   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model ScheduleItem {
+  id           String            @id @default(cuid())
+  dayOfWeek    Int
+  startTime    String
+  endTime      String
+  assignmentId String
+  assignment   TeacherAssignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@unique([dayOfWeek, startTime, assignmentId])
+}
+
+enum EventType {
+  MEETING
+  BULLETIN_DELIVERY
+  PEDAGOGICAL_DAY
+  HOLIDAY
+  OTHER
+}
+
+model PasswordResetRequest {
+  id              String        @id @default(cuid())
+  documentType    String
+  documentId      String
+  status          RequestStatus @default(PENDING)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }

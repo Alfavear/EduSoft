@@ -87,14 +87,51 @@ export async function createUser(data: {
   }
 }
 
-export async function getUsers() {
-  return await prisma.user.findMany({
-    include: {
-      studentProfile: { include: { course: true } },
-      teacherProfile: true
-    },
-    orderBy: { createdAt: 'desc' }
-  });
+export async function getUsers(params?: { 
+  search?: string, 
+  role?: string, 
+  page?: number, 
+  pageSize?: number 
+}) {
+  const { search, role, page = 1, pageSize = 20 } = params || {};
+  const skip = (page - 1) * pageSize;
+
+  const where: any = {};
+  if (role && role !== "ALL") where.role = role;
+  if (search) {
+    where.OR = [
+      { username: { contains: search, mode: 'insensitive' } },
+      { studentProfile: { OR: [
+        { firstName: { contains: search, mode: 'insensitive' } },
+        { lastName: { contains: search, mode: 'insensitive' } }
+      ] } },
+      { teacherProfile: { OR: [
+        { firstName: { contains: search, mode: 'insensitive' } },
+        { lastName: { contains: search, mode: 'insensitive' } }
+      ] } }
+    ];
+  }
+
+  const [users, totalCount] = await Promise.all([
+    prisma.user.findMany({
+      where,
+      include: {
+        studentProfile: { include: { course: true } },
+        teacherProfile: true
+      },
+      orderBy: { createdAt: 'desc' },
+      skip,
+      take: pageSize
+    }),
+    prisma.user.count({ where })
+  ]);
+
+  return { 
+    users, 
+    totalCount, 
+    page, 
+    totalPages: Math.ceil(totalCount / pageSize) 
+  };
 }
 
 export async function getCourses() {

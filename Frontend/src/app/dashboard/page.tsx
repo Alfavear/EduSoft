@@ -10,7 +10,8 @@ import {
   FileText,
   Calendar,
   ChevronRight,
-  TrendingDown
+  TrendingDown,
+  Star
 } from "lucide-react";
 import { getDashboardData, getTeacherDashboardData, getStudentDashboardData } from "./dashboardActions";
 import Link from "next/link";
@@ -39,41 +40,48 @@ export default async function DashboardPage() {
 
       {role === "ADMIN" && (
         <>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>Panel de Control Escolar</h2>
+            <div style={{ backgroundColor: 'white', padding: '0.5rem 1rem', borderRadius: '2rem', border: '1px solid var(--border-light)', fontSize: '0.875rem', fontWeight: '500', color: 'var(--color-primary)' }}>
+              Periodo Activo: {data.activePeriod}
+            </div>
+          </div>
+
           <div className="grid-stats">
             <div className="widget-stat" style={{ backgroundColor: 'var(--color-primary)' }}>
               <span className="number">{data.studentCount}</span>
               <span className="label">Estudiantes Activos</span>
               <Users size={48} opacity={0.2} style={{ position: 'absolute', right: '1rem', bottom: '1rem' }} />
             </div>
-            <div className="widget-stat" style={{ backgroundColor: 'var(--color-success)' }}>
-              <span className="number">{data.teacherCount}</span>
-              <span className="label">Docentes</span>
-              <BookOpen size={48} opacity={0.2} style={{ position: 'absolute', right: '1rem', bottom: '1rem' }} />
-            </div>
-            <div className="widget-stat" style={{ backgroundColor: 'var(--color-purple)' }}>
-              <span className="number">{data.courseCount}</span>
-              <span className="label">Cursos</span>
+            <div className="widget-stat" style={{ backgroundColor: 'var(--color-teal)' }}>
+              <span className="number">{data.attendanceRate}%</span>
+              <span className="label">Asistencia Hoy</span>
               <CheckCircle size={48} opacity={0.2} style={{ position: 'absolute', right: '1rem', bottom: '1rem' }} />
             </div>
-            <div className="widget-stat" style={{ backgroundColor: data.studentsAtRisk?.length > 0 ? 'var(--color-danger)' : 'var(--color-warning)' }}>
+            <div className="widget-stat" style={{ backgroundColor: data.studentsAtRisk?.length > 0 ? 'var(--color-danger)' : 'var(--color-success)' }}>
               <span className="number">{data.studentsAtRisk?.length || 0}</span>
               <span className="label">Alertas Tempranas</span>
               <AlertTriangle size={48} opacity={0.2} style={{ position: 'absolute', right: '1rem', bottom: '1rem' }} />
             </div>
+            <div className="widget-stat" style={{ backgroundColor: 'var(--color-purple)' }}>
+              <span className="number">{data.criticalSubject.average > 0 ? data.criticalSubject.average.toFixed(1) : "N/A"}</span>
+              <span className="label">Materia Crítica: {data.criticalSubject.name}</span>
+              <TrendingDown size={48} opacity={0.2} style={{ position: 'absolute', right: '1rem', bottom: '1rem' }} />
+            </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '2rem', marginTop: '2rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginTop: '2rem' }}>
+            {/* Alerta Temprana */}
             <div>
               <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <TrendingDown color="var(--color-danger)" />
-                Sistema de Alerta Temprana
+                <AlertTriangle color="var(--color-danger)" />
+                Estudiantes en Riesgo Académico
               </h2>
               <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead style={{ backgroundColor: 'rgba(239, 68, 68, 0.05)', borderBottom: '1px solid var(--border-light)' }}>
                     <tr>
                       <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.875rem' }}>Estudiante</th>
-                      <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.875rem' }}>Grado</th>
                       <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.875rem' }}>Promedio</th>
                       <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.875rem' }}>Acción</th>
                     </tr>
@@ -82,57 +90,62 @@ export default async function DashboardPage() {
                     {data.studentsAtRisk?.length > 0 ? (
                       data.studentsAtRisk.map((s: any) => (
                         <tr key={s.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
-                          <td style={{ padding: '1rem', fontWeight: '500' }}>{s.name}</td>
-                          <td style={{ padding: '1rem', color: 'var(--text-muted)' }}>{s.course}</td>
+                          <td style={{ padding: '1rem' }}>
+                            <div style={{ fontWeight: '600' }}>{s.name}</div>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{s.course}</div>
+                          </td>
                           <td style={{ padding: '1rem' }}>
                             <span style={{ color: 'var(--color-danger)', fontWeight: 'bold', backgroundColor: 'rgba(239, 68, 68, 0.1)', padding: '0.25rem 0.5rem', borderRadius: '4px' }}>
                               {s.average.toFixed(2)}
                             </span>
                           </td>
                           <td style={{ padding: '1rem' }}>
-                            <Link href={`/dashboard/usuarios?id=${s.id}`} style={{ color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.875rem', textDecoration: 'none' }}>
-                              Ver Perfil <ChevronRight size={14} />
-                            </Link>
+                            <Link href={`/dashboard/usuarios?id=${s.id}`} style={{ color: 'var(--color-primary)', textDecoration: 'none', fontSize: '0.875rem' }}>Ver Detalle</Link>
                           </td>
                         </tr>
                       ))
                     ) : (
-                      <tr>
-                        <td colSpan={4} style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-                          No hay alertas críticas en este momento. ¡Buen trabajo!
-                        </td>
-                      </tr>
+                      <tr><td colSpan={3} style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>Sin alertas críticas.</td></tr>
                     )}
                   </tbody>
                 </table>
               </div>
             </div>
 
+            {/* Cuadro de Honor */}
             <div>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>Accesos Rápidos</h2>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <Link href="/dashboard/usuarios" style={{ textDecoration: 'none' }}>
-                  <div className="card" style={{ padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{ padding: '0.75rem', backgroundColor: 'rgba(59, 130, 246, 0.1)', color: 'var(--color-primary)', borderRadius: '0.5rem' }}>
-                      <UserPlus size={20} />
-                    </div>
-                    <div>
-                      <h3 style={{ fontWeight: 'bold', fontSize: '0.9rem', color: 'var(--text-main)' }}>Matricular Estudiante</h3>
-                      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Añadir nuevo registro</p>
-                    </div>
-                  </div>
-                </Link>
-                <Link href="/dashboard/asignaciones" style={{ textDecoration: 'none' }}>
-                  <div className="card" style={{ padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{ padding: '0.75rem', backgroundColor: 'rgba(139, 92, 246, 0.1)', color: 'var(--color-purple)', borderRadius: '0.5rem' }}>
-                      <BookOpen size={20} />
-                    </div>
-                    <div>
-                      <h3 style={{ fontWeight: 'bold', fontSize: '0.9rem', color: 'var(--text-main)' }}>Asignar Materias</h3>
-                      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Gestión académica</p>
-                    </div>
-                  </div>
-                </Link>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Star color="var(--color-warning)" fill="var(--color-warning)" />
+                Cuadro de Honor (Excelencia)
+              </h2>
+              <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead style={{ backgroundColor: 'rgba(245, 158, 11, 0.05)', borderBottom: '1px solid var(--border-light)' }}>
+                    <tr>
+                      <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.875rem' }}>Estudiante</th>
+                      <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.875rem' }}>Promedio</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.excellenceTable?.length > 0 ? (
+                      data.excellenceTable.map((s: any, idx: number) => (
+                        <tr key={idx} style={{ borderBottom: '1px solid var(--border-light)' }}>
+                          <td style={{ padding: '1rem' }}>
+                            <div style={{ fontWeight: '600' }}>{s.name}</div>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{s.course}</div>
+                          </td>
+                          <td style={{ padding: '1rem' }}>
+                            <span style={{ color: 'var(--color-success)', fontWeight: 'bold', backgroundColor: 'rgba(16, 185, 129, 0.1)', padding: '0.25rem 0.5rem', borderRadius: '4px' }}>
+                              {s.average.toFixed(2)}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr><td colSpan={2} style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>No hay datos suficientes.</td></tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
