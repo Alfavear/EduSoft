@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { Calendar } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import ScheduleFilters from "./ScheduleFilters";
+import ScheduleManager from "./ScheduleManager";
+import DeleteScheduleItem from "./DeleteScheduleItem";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 
@@ -48,6 +50,10 @@ export default async function SchedulePage({ searchParams }: { searchParams: Pro
 
   const courses = await prisma.course.findMany({ orderBy: { name: 'asc' } });
   const teachers = await prisma.teacher.findMany({ orderBy: { firstName: 'asc' } });
+  const allAssignments = await prisma.teacherAssignment.findMany({
+    include: { teacher: true, course: true, subject: true },
+    orderBy: [{ course: { name: 'asc' } }, { subject: { name: 'asc' } }]
+  });
 
   const days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
   const timeSlots = ["07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00"];
@@ -62,9 +68,12 @@ export default async function SchedulePage({ searchParams }: { searchParams: Pro
       </div>
 
       {role === "ADMIN" && (
-        <Suspense fallback={<div style={{ padding: '1rem', color: 'var(--text-muted)' }}>Cargando filtros...</div>}>
-          <ScheduleFilters courses={courses} teachers={teachers} />
-        </Suspense>
+        <>
+          <ScheduleManager assignments={allAssignments} />
+          <Suspense fallback={<div style={{ padding: '1rem', color: 'var(--text-muted)' }}>Cargando filtros...</div>}>
+            <ScheduleFilters courses={courses} teachers={teachers} />
+          </Suspense>
+        </>
       )}
 
       {(schedule.length > 0 || role !== "ADMIN") ? (
@@ -100,8 +109,10 @@ export default async function SchedulePage({ searchParams }: { searchParams: Pro
                             flexDirection: 'column',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            textAlign: 'center'
+                            textAlign: 'center',
+                            position: 'relative'
                           }}>
+                            {role === "ADMIN" && <DeleteScheduleItem id={item.id} />}
                             <div style={{ fontWeight: '900', color: 'var(--color-primary)', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
                               {item.assignment.subject.name.toUpperCase()}
                             </div>
