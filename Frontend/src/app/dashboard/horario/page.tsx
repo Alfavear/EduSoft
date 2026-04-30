@@ -106,8 +106,8 @@ export default async function SchedulePage({ searchParams }: { searchParams: Pro
                               {item.assignment.subject.name.toUpperCase()}
                             </div>
                             <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: '600' }}>
-                              {/* If admin is viewing course, show teacher. If admin is viewing teacher, show course. */}
-                              {teacherId 
+                              {/* If admin is viewing course, show teacher. If admin is viewing teacher or user is teacher, show course. */}
+                              {(teacherId || role === "TEACHER")
                                 ? `🏫 GRADO: ${item.assignment.course.name}`
                                 : `👨‍🏫 ${item.assignment.teacher.firstName} ${item.assignment.teacher.lastName}`
                               }
