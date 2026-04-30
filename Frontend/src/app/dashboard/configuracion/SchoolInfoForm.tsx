@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { updateSchoolInfo } from "./schoolActions";
-import { Building, Save, Image as ImageIcon, Phone, MapPin, Hash, UserCheck, Mail } from "lucide-react";
+import { Building, Save, Image as ImageIcon, Phone, MapPin, Hash, UserCheck, Mail, ShieldCheck, Lock, Settings2 } from "lucide-react";
 
 export function SchoolInfoForm({ initialData, mode = "identity" }: { initialData: any, mode?: "identity" | "security" }) {
   const [formData, setFormData] = useState(initialData);
