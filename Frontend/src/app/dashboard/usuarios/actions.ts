@@ -119,7 +119,7 @@ export async function getUsers(params?: {
         studentProfile: { include: { course: true } },
         teacherProfile: true
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { username: 'asc' },
       skip,
       take: pageSize
     }),

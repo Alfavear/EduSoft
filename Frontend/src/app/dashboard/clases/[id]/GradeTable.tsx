@@ -13,7 +13,12 @@ export function GradeTable({ assignment, periods }: { assignment: any, periods: 
   const [message, setMessage] = useState({ type: "", text: "" });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const students = assignment.course.students;
+  const students = [...assignment.course.students].sort((a, b) => {
+    const nameA = `${a.lastName} ${a.firstName}`.toLowerCase();
+    const nameB = `${b.lastName} ${b.firstName}`.toLowerCase();
+    return nameA.localeCompare(nameB);
+  });
+
   const config = assignment.subject.gradingConfig;
   
   const currentPeriod = periods.find(p => p.id === selectedPeriod);
@@ -72,7 +77,7 @@ export function GradeTable({ assignment, periods }: { assignment: any, periods: 
   const downloadTemplate = () => {
     const periodName = periods.find(p => p.id === selectedPeriod)?.name || "Periodo";
     const data = students.map((s: any) => ({
-      "ID_ESTUDIANTE": s.id,
+      "IDENTIFICACION": s.documentId || "SIN_ID",
       "NOMBRE": s.firstName,
       "APELLIDO": s.lastName,
       "NOTA": ""
@@ -103,11 +108,14 @@ export function GradeTable({ assignment, periods }: { assignment: any, periods: 
       let importedCount = 0;
 
       data.forEach(row => {
-        if (row.ID_ESTUDIANTE && row.NOTA !== undefined) {
-          // Validación básica de rango
-          const val = row.NOTA.toString();
-          newGrades[row.ID_ESTUDIANTE] = val;
-          importedCount++;
+        const docId = row.IDENTIFICACION?.toString();
+        if (docId && row.NOTA !== undefined) {
+          // Buscar el estudiante por documentId
+          const student = students.find((s: any) => s.documentId === docId);
+          if (student) {
+            newGrades[student.id] = row.NOTA.toString();
+            importedCount++;
+          }
         }
       });
 

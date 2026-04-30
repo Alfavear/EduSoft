@@ -21,14 +21,17 @@ export async function createAssignment(data: { teacherId: string, courseId: stri
 
 export async function getAssignmentData() {
   const [teachers, courses, subjects, assignments] = await Promise.all([
-    prisma.teacher.findMany(),
-    prisma.course.findMany(),
-    prisma.subject.findMany(),
+    prisma.teacher.findMany({ orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }] }),
+    prisma.course.findMany({ orderBy: { name: 'asc' } }),
+    prisma.subject.findMany({ orderBy: { name: 'asc' } }),
     prisma.teacherAssignment.findMany({
       include: {
         teacher: true,
         course: true,
         subject: true
+      },
+      orderBy: {
+        course: { name: 'asc' }
       }
     })
   ]);

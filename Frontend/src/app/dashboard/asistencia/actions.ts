@@ -15,7 +15,10 @@ export async function getAttendanceData(courseId: string, dateStr: string) {
         where: { date }
       }
     },
-    orderBy: { lastName: 'asc' }
+    orderBy: [
+      { lastName: 'asc' },
+      { firstName: 'asc' }
+    ]
   });
 
   return students.map(s => ({

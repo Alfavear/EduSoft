@@ -53,7 +53,12 @@ export async function getAssignmentDetails(assignmentId: string) {
       teacher: true,
       course: { 
         include: { 
-          students: true 
+          students: {
+            orderBy: [
+              { lastName: 'asc' },
+              { firstName: 'asc' }
+            ]
+          } 
         } 
       },
       subject: { 
