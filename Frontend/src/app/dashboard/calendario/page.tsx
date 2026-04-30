@@ -22,7 +22,7 @@ export default async function CalendarPage() {
 
   return (
     <div className="container">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 style={{ fontSize: '2rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <CalendarIcon size={32} color="var(--color-primary)" />
@@ -30,7 +30,7 @@ export default async function CalendarPage() {
           </h1>
           <p style={{ color: 'var(--text-muted)' }}>Eventos institucionales y actividades de curso.</p>
         </div>
-        {(isAdmin || isTeacher) && <EventManager />}
+        {(isAdmin || isTeacher) && <EventManager assignments={[]} />}
       </div>
 
       <CalendarGrid initialEvents={events} />

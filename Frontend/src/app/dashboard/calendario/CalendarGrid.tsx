@@ -98,13 +98,15 @@ export default function CalendarGrid({ initialEvents }: { initialEvents: Calenda
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', borderCollapse: 'collapse' }}>
-        {dayNames.map(day => (
-          <div key={day} style={{ padding: '1rem', textAlign: 'center', fontWeight: 'bold', backgroundColor: '#f3f4f6', border: '1px solid var(--border-light)' }}>
-            {day}
-          </div>
-        ))}
-        {renderDays()}
+      <div style={{ overflowX: 'auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', minWidth: '700px', borderCollapse: 'collapse' }}>
+          {dayNames.map(day => (
+            <div key={day} style={{ padding: '1rem', textAlign: 'center', fontWeight: 'bold', backgroundColor: '#f3f4f6', border: '1px solid var(--border-light)' }}>
+              {day}
+            </div>
+          ))}
+          {renderDays()}
+        </div>
       </div>
 
       {selectedEvent && (

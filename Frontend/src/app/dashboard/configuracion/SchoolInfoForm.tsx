@@ -59,7 +59,7 @@ export function SchoolInfoForm({ initialData }: { initialData: any }) {
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: '2.5rem', marginBottom: '2.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginBottom: '2.5rem' }}>
           {/* Logo Section */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
             <div style={{ 
@@ -83,7 +83,7 @@ export function SchoolInfoForm({ initialData }: { initialData: any }) {
           </div>
 
           {/* Form Fields */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
             <div className="form-group">
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem', color: 'var(--text-main)' }}>
                 <Building size={14} /> Nombre de la Institución
@@ -126,9 +126,9 @@ export function SchoolInfoForm({ initialData }: { initialData: any }) {
               <input name="rectorName" value={formData.rectorName || ""} onChange={handleChange} className="input-field" placeholder="Nombre completo" style={{ width: '100%' }} />
             </div>
 
-            <div className="form-group" style={{ gridColumn: 'span 2', marginTop: '1.5rem', padding: '1.5rem', backgroundColor: 'var(--bg-app)', borderRadius: '15px', border: '1px solid var(--border-light)' }}>
+            <div className="form-group" style={{ gridColumn: '1 / -1', marginTop: '1.5rem', padding: '1.5rem', backgroundColor: 'var(--bg-app)', borderRadius: '15px', border: '1px solid var(--border-light)' }}>
               <h3 style={{ fontSize: '1rem', fontWeight: '700', marginBottom: '1.5rem', color: 'var(--text-main)', borderBottom: '1px solid var(--border-light)', paddingBottom: '0.75rem' }}>Parámetros del Sistema</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '2rem' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>Límite de Días para Asistencia</label>
                   <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>Días permitidos hacia atrás para registrar asistencia sin solicitud.</p>
