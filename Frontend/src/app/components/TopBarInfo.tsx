@@ -32,8 +32,8 @@ export function TopBarInfo({ schoolName, periodName }: { schoolName: string, per
       display: 'flex', 
       alignItems: 'center', 
       gap: '2rem', 
-      marginRight: 'auto', 
-      marginLeft: '2rem',
+      marginLeft: 'auto', 
+      marginRight: '2rem',
       fontSize: '0.8125rem',
       color: 'var(--text-muted)'
     }}>
