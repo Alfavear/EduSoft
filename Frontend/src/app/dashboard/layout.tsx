@@ -2,7 +2,6 @@
 
 import { useSession, signOut } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
-import { useEffect } from "react";
 import Link from "next/link";
 import { NotificationBell } from "../components/NotificationBell";
 import { UserDropdown } from "../components/UserDropdown";
@@ -27,7 +26,9 @@ import {
   Menu,
   X
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { TopBarInfo } from "../components/TopBarInfo";
+import { getTopBarData } from "./layoutActions";
 
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -35,6 +36,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter();
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [topBarData, setTopBarData] = useState({ schoolName: "EduSoft", periodName: "..." });
+
+  useEffect(() => {
+    getTopBarData().then(setTopBarData);
+  }, []);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -190,6 +196,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               {/* Opcional: breadcrumbs */}
             </div>
           </div>
+
+          <TopBarInfo schoolName={topBarData.schoolName} periodName={topBarData.periodName} />
+
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <NotificationBell />
             <div style={{ width: '1px', height: '24px', backgroundColor: 'var(--border-light)' }}></div>
