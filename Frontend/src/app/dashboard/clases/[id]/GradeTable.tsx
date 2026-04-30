@@ -77,7 +77,7 @@ export function GradeTable({ assignment, periods }: { assignment: any, periods: 
   const downloadTemplate = () => {
     const periodName = periods.find(p => p.id === selectedPeriod)?.name || "Periodo";
     const data = students.map((s: any) => ({
-      "IDENTIFICACION": s.documentId || "SIN_ID",
+      "ID_ESTUDIANTE": s.documentId || s.id,
       "NOMBRE": s.firstName,
       "APELLIDO": s.lastName,
       "NOTA": ""
@@ -108,10 +108,10 @@ export function GradeTable({ assignment, periods }: { assignment: any, periods: 
       let importedCount = 0;
 
       data.forEach(row => {
-        const docId = row.IDENTIFICACION?.toString();
-        if (docId && row.NOTA !== undefined) {
-          // Buscar el estudiante por documentId
-          const student = students.find((s: any) => s.documentId === docId);
+        const studentIdVal = row.ID_ESTUDIANTE?.toString();
+        if (studentIdVal && row.NOTA !== undefined) {
+          // Buscar el estudiante por documentId o por el ID interno
+          const student = students.find((s: any) => s.documentId === studentIdVal || s.id === studentIdVal);
           if (student) {
             newGrades[student.id] = row.NOTA.toString();
             importedCount++;
