@@ -22,20 +22,29 @@ import {
   ClipboardList,
   Star,
   CheckCircle,
-  Clock
+  Clock,
+  Menu,
+  X
 } from "lucide-react";
+import { useState } from "react";
 
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/login");
     }
   }, [status, router]);
+
+  // Close sidebar on navigation (mobile)
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [pathname]);
 
   if (status === "loading" || !session?.user) {
     return <div className="container" style={{ display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center' }}>Cargando...</div>;
@@ -45,11 +54,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="app-layout">
+      {/* Mobile Backdrop */}
+      <div 
+        className={`sidebar-overlay ${isSidebarOpen ? 'active' : ''}`} 
+        onClick={() => setIsSidebarOpen(false)}
+      ></div>
+
       {/* Sidebar */}
-      <aside className="app-sidebar">
-        <div style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.1)', marginBottom: '1rem' }}>
-          <GraduationCap size={28} color="var(--color-primary)" />
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'white' }}>EduSoft</h2>
+      <aside className={`app-sidebar ${isSidebarOpen ? 'mobile-open' : ''}`}>
+        <div style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.1)', marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <GraduationCap size={28} color="var(--color-primary)" />
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'white' }}>EduSoft</h2>
+          </div>
+          <button 
+            className="mobile-only" 
+            onClick={() => setIsSidebarOpen(false)}
+            style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}
+          >
+            <X size={24} />
+          </button>
         </div>
         
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
@@ -153,23 +177,32 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div className="app-main">
         {/* Topbar */}
         <header className="app-topbar">
-          <div style={{ fontWeight: '500' }}>
-            {/* Opcional: breadcrumbs o título de sección */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <button 
+              className="mobile-only"
+              onClick={() => setIsSidebarOpen(true)}
+              style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer', padding: '0.5rem' }}
+            >
+              <Menu size={24} />
+            </button>
+            <div style={{ fontWeight: '500' }} className="desktop-only">
+              {/* Opcional: breadcrumbs */}
+            </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <NotificationBell />
             <div style={{ width: '1px', height: '24px', backgroundColor: 'var(--border-light)' }}></div>
-            <a href="/dashboard/perfil" style={{ display: 'flex', alignItems: 'center', gap: '1rem', textDecoration: 'none', color: 'inherit' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+            <a href="/dashboard/perfil" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none', color: 'inherit' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }} className="user-info-text">
                 <span style={{ fontWeight: '600', fontSize: '0.875rem' }}>{session.user.name}</span>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{(session.user as any).username}</span>
               </div>
               <div style={{ 
                 backgroundColor: role === 'ADMIN' ? 'var(--color-purple)' : role === 'TEACHER' ? 'var(--color-teal)' : 'var(--color-primary)', 
                 color: 'white', 
-                padding: '0.25rem 0.75rem', 
+                padding: '0.2rem 0.6rem', 
                 borderRadius: '2rem', 
-                fontSize: '0.75rem', 
+                fontSize: '0.7rem', 
                 fontWeight: 'bold' 
               }}>
                 {role}

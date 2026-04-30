@@ -138,16 +138,19 @@ export default function LoginPage() {
         </div>
 
         {/* Right Side: Illustration */}
-        <div style={{ 
-          flex: '1.2', 
-          backgroundColor: 'rgba(59, 130, 246, 0.05)', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          padding: '2rem',
-          position: 'relative',
-          overflow: 'hidden'
-        }}>
+        <div 
+          className="desktop-only"
+          style={{ 
+            flex: '1.2', 
+            backgroundColor: 'rgba(59, 130, 246, 0.05)', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            padding: '2rem',
+            position: 'relative',
+            overflow: 'hidden'
+          }}
+        >
           <div style={{ 
             position: 'absolute', 
             width: '140%', 

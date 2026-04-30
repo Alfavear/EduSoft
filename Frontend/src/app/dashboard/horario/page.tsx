@@ -77,8 +77,18 @@ export default async function SchedulePage({ searchParams }: { searchParams: Pro
       )}
 
       {(schedule.length > 0 || role !== "ADMIN") ? (
-        <div className="card" style={{ padding: '0.5rem', background: '#fff', border: '10px solid #f3f4f6', borderRadius: '1rem', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)' }}>
-          <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '8px' }}>
+        <div 
+          className="card" 
+          style={{ 
+            padding: '0.5rem', 
+            background: '#fff', 
+            border: '10px solid #f3f4f6', 
+            borderRadius: '1rem', 
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+            overflowX: 'auto'
+          }}
+        >
+          <table style={{ width: '100%', minWidth: '800px', borderCollapse: 'separate', borderSpacing: '8px' }}>
             <thead>
               <tr>
                 <th style={{ backgroundColor: 'var(--color-warning)', color: '#fff', padding: '1rem', borderRadius: '0.5rem', width: '100px' }}>HORA</th>
