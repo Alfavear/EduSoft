@@ -7,7 +7,8 @@ export async function getExcellenceReport() {
     include: {
       grades: true,
       course: true
-    }
+    },
+    orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }]
   });
 
   return students.map(s => {
@@ -28,7 +29,8 @@ export async function getAttendanceWarningReport() {
     include: {
       attendances: true,
       course: true
-    }
+    },
+    orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }]
   });
 
   return students.map(s => {
@@ -51,7 +53,8 @@ export async function getConsolidatedCourseReport(courseId: string) {
     prisma.course.findUnique({ where: { id: courseId } }),
     prisma.student.findMany({ 
       where: { courseId },
-      include: { grades: { include: { assignment: { include: { subject: true } } } } }
+      include: { grades: { include: { assignment: { include: { subject: true } } } } },
+      orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }]
     }),
     prisma.subject.findMany({
       where: { assignments: { some: { courseId } } }

@@ -15,13 +15,16 @@ export async function getTopBarData() {
     return {
       schoolName: school?.name || "EduSoft",
       periodName: year?.periods[0]?.name || "Sin periodo activo",
-      sessionTimeout: school?.sessionTimeout || 60
+      sessionTimeout: school?.sessionTimeout || 60,
+      keepSessionOpen: school?.keepSessionOpen ?? false
     };
   } catch (error) {
     console.error("Error fetching topbar data:", error);
     return {
       schoolName: "EduSoft",
-      periodName: "---"
+      periodName: "---",
+      sessionTimeout: 60,
+      keepSessionOpen: false
     };
   }
 }

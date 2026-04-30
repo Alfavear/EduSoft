@@ -135,7 +135,9 @@ export async function getUsers(params?: {
 }
 
 export async function getCourses() {
-  return await prisma.course.findMany();
+  return await prisma.course.findMany({
+    orderBy: { name: 'asc' }
+  });
 }
 
 export async function getStudentReport(studentId: string) {
@@ -151,7 +153,8 @@ export async function getStudentReport(studentId: string) {
                 where: { studentId: studentId },
                 include: { period: true }
               }
-            }
+            },
+            orderBy: { subject: { name: 'asc' } }
           }
         }
       }

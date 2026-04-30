@@ -31,27 +31,39 @@ export function TopBarInfo({ schoolName, periodName }: { schoolName: string, per
     <div className="desktop-only" style={{ 
       display: 'flex', 
       alignItems: 'center', 
-      gap: '2rem', 
+      gap: '1.5rem', 
       marginLeft: 'auto', 
-      marginRight: '2rem',
+      marginRight: '1rem',
       fontSize: '0.8125rem',
-      color: 'var(--text-muted)'
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <Landmark size={14} color="var(--color-primary)" />
-        <span style={{ fontWeight: '600', color: 'var(--text-main)' }}>{schoolName}</span>
-      </div>
+      {/* Red Banner - Institutional Info */}
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        gap: '1.25rem',
+        backgroundColor: 'rgba(239, 68, 68, 0.08)', 
+        padding: '0.4rem 1.25rem', 
+        borderRadius: '12px', 
+        border: '1px solid rgba(239, 68, 68, 0.15)',
+        boxShadow: '0 2px 4px rgba(239, 68, 68, 0.05)',
+        transition: 'all 0.3s ease'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', borderRight: '1px solid rgba(239, 68, 68, 0.2)', paddingRight: '1rem' }}>
+          <Landmark size={15} color="#dc2626" style={{ filter: 'drop-shadow(0 0 2px rgba(220, 38, 38, 0.2))' }} />
+          <span style={{ fontWeight: '700', color: '#991b1b', letterSpacing: '0.01em' }}>{schoolName}</span>
+        </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', backgroundColor: 'rgba(59, 130, 246, 0.05)', padding: '0.25rem 0.75rem', borderRadius: '1rem', border: '1px solid rgba(59, 130, 246, 0.1)' }}>
-        <CalendarDays size={14} color="var(--color-primary)" />
-        <span style={{ fontWeight: '500' }}>{periodName}</span>
-      </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', borderRight: '1px solid rgba(239, 68, 68, 0.2)', paddingRight: '1rem' }}>
+          <CalendarDays size={15} color="#dc2626" />
+          <span style={{ fontWeight: '600', color: '#b91c1c' }}>{periodName}</span>
+        </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: '140px' }}>
-        <Clock size={14} />
-        <span style={{ fontVariantNumeric: 'tabular-nums' }}>
-          {formatDate(time)} • <strong style={{ color: 'var(--text-main)' }}>{formatTime(time)}</strong>
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', minWidth: '150px' }}>
+          <Clock size={15} color="#dc2626" />
+          <span style={{ fontVariantNumeric: 'tabular-nums', color: '#b91c1c', fontWeight: '500' }}>
+            {formatDate(time)} • <strong style={{ color: '#991b1b', fontWeight: '700' }}>{formatTime(time)}</strong>
+          </span>
+        </div>
       </div>
     </div>
   );

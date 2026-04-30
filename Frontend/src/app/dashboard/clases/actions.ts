@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { createAuditLog } from "@/lib/audit";
 
 export async function getTeacherAssignments() {
   const session = await getServerSession(authOptions);
@@ -135,6 +136,16 @@ export async function saveGrades(grades: { studentId: string, assignmentId: stri
         create: grade
       }))
     );
+
+    // Auditoría
+    await createAuditLog({
+      userId: session.user.id,
+      action: "UPDATE_GRADES",
+      entity: "GRADE",
+      entityId: grades[0]?.assignmentId,
+      details: `Se actualizaron ${grades.length} calificaciones.`
+    });
+
     return { success: true };
   } catch (error) {
     console.error("Error saving grades:", error);
@@ -181,6 +192,19 @@ export async function respondToRequest(requestId: string, status: "APPROVED" | "
       where: { id: requestId },
       data: { status, expiresAt }
     });
+
+    // Auditoría
+    const session = await getServerSession(authOptions);
+    if (session?.user) {
+      await createAuditLog({
+        userId: (session.user as any).id,
+        action: `RESPOND_ACCESS_${status}`,
+        entity: "ACCESS_REQUEST",
+        entityId: requestId,
+        details: `Respuesta a solicitud: ${status}. Expiración: ${expiresAt || 'N/A'}`
+      });
+    }
+
     revalidatePath("/dashboard/admin/solicitudes");
     return { success: true };
   } catch (error) {

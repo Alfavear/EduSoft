@@ -5,6 +5,7 @@ import { SchoolInfoForm } from "./SchoolInfoForm";
 import { ConfigForm } from "./ConfigForm";
 import { Calendar, Settings2, ShieldCheck, Building } from "lucide-react";
 import { StatusToggle } from "./StatusToggle";
+import { AuditLogView } from "./AuditLogView";
 
 export function ConfigTabs({ schoolInfo, years }: { schoolInfo: any, years: any[] }) {
   const [activeTab, setActiveTab] = useState("general");
@@ -42,6 +43,9 @@ export function ConfigTabs({ schoolInfo, years }: { schoolInfo: any, years: any[
         </div>
         <div onClick={() => setActiveTab("seguridad")} style={tabStyle("seguridad")}>
           <ShieldCheck size={18} /> Seguridad y Sistema
+        </div>
+        <div onClick={() => setActiveTab("logs")} style={tabStyle("logs")}>
+          <Settings2 size={18} /> Logs del Sistema
         </div>
       </div>
 
@@ -92,6 +96,10 @@ export function ConfigTabs({ schoolInfo, years }: { schoolInfo: any, years: any[
 
         {activeTab === "seguridad" && (
           <SchoolInfoForm initialData={schoolInfo} mode="security" />
+        )}
+
+        {activeTab === "logs" && (
+          <AuditLogView />
         )}
       </div>
     </div>

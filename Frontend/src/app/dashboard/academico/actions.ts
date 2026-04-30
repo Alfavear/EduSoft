@@ -2,6 +2,9 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { createAuditLog } from "@/lib/audit";
 
 export async function createCourse(data: { name: string, description?: string, directorId?: string }) {
   try {
@@ -14,6 +17,19 @@ export async function createCourse(data: { name: string, description?: string, d
     });
     revalidatePath("/dashboard/academico");
     revalidatePath("/dashboard/usuarios");
+
+    // Auditoría
+    const session = await getServerSession(authOptions);
+    if (session?.user) {
+      await createAuditLog({
+        userId: (session.user as any).id,
+        action: "CREATE_COURSE",
+        entity: "COURSE",
+        entityId: course.id,
+        details: `Se creó el curso: ${course.name}`
+      });
+    }
+
     return { success: true, data: course };
   } catch (error) {
     console.error("Error creating course:", error);
@@ -27,6 +43,19 @@ export async function createSubject(data: { name: string, gradingConfigId: strin
       data
     });
     revalidatePath("/dashboard/academico");
+
+    // Auditoría
+    const session = await getServerSession(authOptions);
+    if (session?.user) {
+      await createAuditLog({
+        userId: (session.user as any).id,
+        action: "CREATE_SUBJECT",
+        entity: "SUBJECT",
+        entityId: subject.id,
+        details: `Se creó la materia: ${subject.name}`
+      });
+    }
+
     return { success: true, data: subject };
   } catch (error) {
     console.error("Error creating subject:", error);
@@ -40,11 +69,22 @@ export async function getAcademicData() {
       include: { 
         _count: { select: { students: true } },
         director: true
-      } 
+      },
+      orderBy: { name: 'asc' }
     }),
-    prisma.subject.findMany({ include: { gradingConfig: true } }),
-    prisma.gradingConfig.findMany(),
-    prisma.teacher.findMany()
+    prisma.subject.findMany({ 
+      include: { gradingConfig: true },
+      orderBy: { name: 'asc' }
+    }),
+    prisma.gradingConfig.findMany({
+      orderBy: { name: 'asc' }
+    }),
+    prisma.teacher.findMany({
+      orderBy: [
+        { lastName: 'asc' },
+        { firstName: 'asc' }
+      ]
+    })
   ]);
   return { courses, subjects, gradingConfigs, teachers };
 }

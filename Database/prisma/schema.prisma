@@ -19,6 +19,7 @@ model User {
   receivedMessages Message[]      @relation("ReceivedMessages")
   sentMessages     Message[]      @relation("SentMessages")
   notifications    Notification[]
+  auditLogs        AuditLog[]
   studentProfile   Student?
   teacherProfile   Teacher?
 }
@@ -149,6 +150,7 @@ model SchoolInfo {
   alertThreshold      Float    @default(3.0)
   attendanceLimitDays Int      @default(1)
   sessionTimeout      Int      @default(60) // In minutes
+  keepSessionOpen     Boolean  @default(false)
 }
 
 model Attendance {
@@ -308,4 +310,15 @@ model PasswordResetRequest {
   status          RequestStatus @default(PENDING)
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  entity    String
+  entityId  String?
+  details   String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }

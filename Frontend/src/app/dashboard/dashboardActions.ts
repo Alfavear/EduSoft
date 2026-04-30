@@ -39,6 +39,7 @@ export async function getDashboardData() {
       grades: { orderBy: { updatedAt: 'desc' }, take: 10 },
       course: true
     },
+    orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }],
     take: 5
   });
 
@@ -56,7 +57,8 @@ export async function getDashboardData() {
 
   // 3. Cuadro de Excelencia (Top 5)
   const allStudents = await prisma.student.findMany({
-    include: { grades: true, course: true }
+    include: { grades: true, course: true },
+    orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }]
   });
 
   const excellenceTable = allStudents.map(s => {

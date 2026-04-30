@@ -3,6 +3,9 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { getSchoolInfo } from "../configuracion/schoolActions";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { createAuditLog } from "@/lib/audit";
 
 export async function getAttendanceData(courseId: string, dateStr: string) {
   const date = new Date(dateStr);
@@ -54,6 +57,19 @@ export async function saveAttendance(courseId: string, dateStr: string, records:
     );
 
     await prisma.$transaction(operations);
+
+    // Auditoría
+    const session = await getServerSession(authOptions);
+    if (session?.user) {
+      await createAuditLog({
+        userId: (session.user as any).id,
+        action: "SAVE_ATTENDANCE",
+        entity: "ATTENDANCE",
+        entityId: courseId,
+        details: `Asistencia guardada para la fecha ${dateStr}. Registros: ${records.length}`
+      });
+    }
+
     revalidatePath("/dashboard/asistencia");
     return { success: true };
   } catch (error) {

@@ -43,14 +43,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       setTopBarData(data);
       
       // Idle Timeout Logic
+      if (data.keepSessionOpen) {
+        console.log("Session persistence enabled: Inactivity timeout disabled.");
+        return;
+      }
+
       const timeoutMinutes = data.sessionTimeout || 60;
       const timeoutMs = timeoutMinutes * 60 * 1000;
       let idleTimer: any;
 
       const resetTimer = () => {
         if (idleTimer) clearTimeout(idleTimer);
-        // Only start timer if NOT 'remembered' (you can store this in cookie or session)
-        // For now, let's assume always if it's a school system
         idleTimer = setTimeout(() => {
           signOut({ callbackUrl: "/login?reason=timeout" });
         }, timeoutMs);

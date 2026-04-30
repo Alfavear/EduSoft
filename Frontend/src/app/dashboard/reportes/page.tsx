@@ -51,6 +51,19 @@ export default async function ReportsPage() {
             </div>
           </div>
         </Link>
+
+        {/* Boletines Escolares */}
+        <Link href="/dashboard/reportes/boletin" style={{ textDecoration: 'none' }}>
+          <div className="card interactive-card" style={{ padding: '2rem', display: 'flex', gap: '1.5rem' }}>
+            <div style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', color: 'var(--color-success)', padding: '1.25rem', borderRadius: '1rem' }}>
+              <FileText size={32} />
+            </div>
+            <div>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Boletines Escolares</h2>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Generación e impresión de reportes de calificaciones por estudiante para el periodo actual.</p>
+            </div>
+          </div>
+        </Link>
       </div>
     </div>
   );

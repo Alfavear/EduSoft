@@ -18,7 +18,7 @@ export default async function AsistenciaPage() {
   let studentData = null;
 
   if (role === "ADMIN") {
-    courses = await prisma.course.findMany();
+    courses = await prisma.course.findMany({ orderBy: { name: 'asc' } });
   } else if (role === "TEACHER") {
     teacherProfile = await prisma.teacher.findUnique({
       where: { userId },

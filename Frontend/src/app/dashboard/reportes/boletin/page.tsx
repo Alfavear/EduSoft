@@ -22,6 +22,9 @@ export default function BoletinSelectionPage() {
       ]);
       setStudents(stData);
       setPeriods(prData);
+      if (prData.length > 0) {
+        setSelectedPeriod(prData[0].id);
+      }
       setIsLoading(false);
     }
     loadData();
