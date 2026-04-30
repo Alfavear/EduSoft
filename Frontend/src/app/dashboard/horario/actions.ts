@@ -23,7 +23,7 @@ export async function getWeeklySchedule(params: { courseId?: string, teacherId?:
       where: { assignment: { teacherId } },
       include: { 
         assignment: { 
-          include: { subject: true, course: true } 
+          include: { subject: true, course: true, teacher: true } 
         } 
       },
       orderBy: [{ dayOfWeek: 'asc' }, { startTime: 'asc' }]
