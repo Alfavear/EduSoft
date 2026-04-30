@@ -108,7 +108,7 @@ export default async function UsuariosPage({
                       </div>
                     </td>
                     <td style={{ padding: '1rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-                      {user.role === "STUDENT" ? user.studentProfile?.course.name : "-"}
+                      {user.role === "STUDENT" ? user.studentProfile?.course?.name : "-"}
                     </td>
                     <td style={{ padding: '1rem', textAlign: 'right', display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', alignItems: 'center' }}>
                       {user.role === "STUDENT" && (
