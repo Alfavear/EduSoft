@@ -141,6 +141,7 @@ model SchoolInfo {
   id                  String   @id @default("institutional-info")
   name                String   @default("Nombre del Colegio")
   nit                 String?
+  dane                String?
   address             String?
   phone               String?
   email               String?

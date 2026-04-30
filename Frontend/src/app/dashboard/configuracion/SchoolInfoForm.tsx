@@ -168,6 +168,13 @@ export function SchoolInfoForm({ initialData, mode = "identity" }: { initialData
 
             <div className="form-group">
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem', color: 'var(--text-main)' }}>
+                <Hash size={14} /> DANE / Registro
+              </label>
+              <input name="dane" value={formData.dane || ""} onChange={handleChange} className="input-field" placeholder="1234567890" style={{ width: '100%' }} />
+            </div>
+
+            <div className="form-group">
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem', color: 'var(--text-main)' }}>
                 <MapPin size={14} /> Dirección Física
               </label>
               <input name="address" value={formData.address || ""} onChange={handleChange} className="input-field" placeholder="Calle 123 #45-67" style={{ width: '100%' }} />
