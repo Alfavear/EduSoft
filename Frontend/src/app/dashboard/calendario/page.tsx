@@ -30,7 +30,7 @@ export default async function CalendarPage() {
           </h1>
           <p style={{ color: 'var(--text-muted)' }}>Eventos institucionales y actividades de curso.</p>
         </div>
-        {(isAdmin || isTeacher) && <EventManager assignments={[]} />}
+        {(isAdmin || isTeacher) && <EventManager />}
       </div>
 
       <CalendarGrid initialEvents={events} />
