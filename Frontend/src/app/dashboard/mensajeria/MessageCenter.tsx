@@ -136,17 +136,40 @@ export function MessageCenter({ initialInbox, initialSent }: { initialInbox: any
                   borderBottom: '1px solid var(--border-light)', 
                   cursor: 'pointer',
                   backgroundColor: selectedMessage?.id === msg.id ? 'var(--bg-app)' : (msg.isRead || activeTab === 'sent' ? 'transparent' : 'rgba(59, 130, 246, 0.05)'),
-                  borderLeft: (!msg.isRead && activeTab === 'inbox') ? '4px solid var(--color-primary)' : 'none'
+                  borderLeft: (!msg.isRead && activeTab === 'inbox') ? '4px solid var(--color-primary)' : 'none',
+                  display: 'flex',
+                  gap: '0.75rem'
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                   <span style={{ fontWeight: 'bold', fontSize: '0.875rem' }}>
-                     {activeTab === 'inbox' ? `${msg.sender.teacherProfile?.firstName || msg.sender.studentProfile?.firstName || msg.sender.username} ${msg.sender.teacherProfile?.lastName || msg.sender.studentProfile?.lastName || ""}` : `Para: ${msg.receiver.teacherProfile?.firstName || msg.receiver.studentProfile?.firstName || msg.receiver.username}`}
-                   </span>
-                   <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                     {new Date(msg.createdAt).toLocaleDateString()}
-                   </span>
+                <div style={{ 
+                  width: '40px', 
+                  height: '40px', 
+                  borderRadius: '50%', 
+                  backgroundColor: 'var(--border-light)', 
+                  flexShrink: 0, 
+                  overflow: 'hidden',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '0.875rem',
+                  fontWeight: 'bold',
+                  color: 'white'
+                }}>
+                  {(activeTab === 'inbox' ? msg.sender.image : msg.receiver.image) ? (
+                    <img src={activeTab === 'inbox' ? msg.sender.image : msg.receiver.image} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <UserIcon size={20} color="var(--text-muted)" />
+                  )}
                 </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem', gap: '0.5rem' }}>
+                     <span style={{ fontWeight: 'bold', fontSize: '0.875rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                       {activeTab === 'inbox' ? `${msg.sender.teacherProfile?.firstName || msg.sender.studentProfile?.firstName || msg.sender.username} ${msg.sender.teacherProfile?.lastName || msg.sender.studentProfile?.lastName || ""}` : `Para: ${msg.receiver.teacherProfile?.firstName || msg.receiver.studentProfile?.firstName || msg.receiver.username}`}
+                     </span>
+                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', flexShrink: 0 }}>
+                       {new Date(msg.createdAt).toLocaleDateString()}
+                     </span>
+                  </div>
                 <div style={{ 
                   fontSize: '0.875rem', 
                   fontWeight: selectedMessage?.id === msg.id ? '700' : '600', 
@@ -179,10 +202,24 @@ export function MessageCenter({ initialInbox, initialSent }: { initialInbox: any
           <>
             <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-light)' }}>
                <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>{selectedMessage.subject}</h2>
-               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
-                    <UserIcon size={20} />
-                  </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                   <div style={{ 
+                     width: '40px', 
+                     height: '40px', 
+                     borderRadius: '50%', 
+                     backgroundColor: 'var(--color-primary)', 
+                     display: 'flex', 
+                     alignItems: 'center', 
+                     justifyContent: 'center', 
+                     color: 'white',
+                     overflow: 'hidden'
+                   }}>
+                     {selectedMessage.sender.image ? (
+                       <img src={selectedMessage.sender.image} alt="Sender" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                     ) : (
+                       <UserIcon size={20} />
+                     )}
+                   </div>
                   <div>
                     <div style={{ fontWeight: 'bold' }}>
                       {selectedMessage.sender.teacherProfile?.firstName || selectedMessage.sender.studentProfile?.firstName || selectedMessage.sender.username} {selectedMessage.sender.teacherProfile?.lastName || selectedMessage.sender.studentProfile?.lastName || ""}
@@ -271,12 +308,33 @@ export function MessageCenter({ initialInbox, initialSent }: { initialInbox: any
                         cursor: 'pointer', 
                         display: 'flex', 
                         alignItems: 'center', 
-                        justifyContent: 'space-between',
+                        gap: '0.75rem',
                         backgroundColor: targetIds.includes(r.id) ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
-                        borderBottom: '1px solid var(--border-light)'
+                        borderBottom: '1px solid var(--border-light)',
+                        transition: 'background-color 0.2s'
                       }}
                     >
-                      <div style={{ fontSize: '0.875rem' }}>{r.name}</div>
+                      <div style={{ 
+                        width: '32px', 
+                        height: '32px', 
+                        borderRadius: '50%', 
+                        backgroundColor: r.type === 'ADMIN' ? 'var(--color-purple)' : r.type === 'TEACHER' ? 'var(--color-teal)' : 'var(--color-primary)',
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        color: 'white',
+                        overflow: 'hidden',
+                        flexShrink: 0,
+                        fontSize: '0.75rem',
+                        fontWeight: 'bold'
+                      }}>
+                        {r.image ? (
+                          <img src={r.image} alt="Recipient" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          r.name.charAt(r.name.indexOf(':') + 2).toUpperCase()
+                        )}
+                      </div>
+                      <div style={{ fontSize: '0.875rem', flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.name}</div>
                       {targetIds.includes(r.id) && <CheckCircle size={16} color="var(--color-primary)" />}
                     </div>
                   ))}

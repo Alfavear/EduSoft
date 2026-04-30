@@ -16,13 +16,19 @@ export async function getMessages(type: 'inbox' | 'sent') {
     where: type === 'inbox' ? { receiverId: userId } : { senderId: userId },
     include: {
       sender: {
-        include: {
+        select: {
+          id: true,
+          username: true,
+          image: true,
           studentProfile: true,
           teacherProfile: true
         }
       },
       receiver: {
-        include: {
+        select: {
+          id: true,
+          username: true,
+          image: true,
           studentProfile: true,
           teacherProfile: true
         }
@@ -100,14 +106,14 @@ export async function getRecipientsByContext() {
   const role = (session.user as any).role;
   const userId = (session.user as any).id;
 
-  const results: { id: string, name: string, type: string }[] = [];
+  const results: { id: string, name: string, type: string, image: string | null }[] = [];
 
   // 1. Siempre incluir todos los administradores
   const admins = await prisma.user.findMany({
     where: { role: 'ADMIN' },
-    select: { id: true, username: true }
+    select: { id: true, username: true, image: true }
   });
-  admins.forEach(a => results.push({ id: a.id, name: `Admin: ${a.username}`, type: 'ADMIN' }));
+  admins.forEach(a => results.push({ id: a.id, name: `Admin: ${a.username}`, type: 'ADMIN', image: a.image }));
 
   // 2. Si es ADMIN, puede ver a todos los docentes
   if (role === 'ADMIN') {
@@ -118,7 +124,8 @@ export async function getRecipientsByContext() {
     teachers.forEach(t => results.push({ 
       id: t.id, 
       name: `Docente: ${t.teacherProfile?.firstName} ${t.teacherProfile?.lastName}`, 
-      type: 'TEACHER' 
+      type: 'TEACHER',
+      image: t.image
     }));
 
     const students = await prisma.user.findMany({
@@ -128,7 +135,8 @@ export async function getRecipientsByContext() {
     students.forEach(s => results.push({ 
       id: s.id, 
       name: `Estudiante: ${s.studentProfile?.firstName} ${s.studentProfile?.lastName} (${s.studentProfile?.course.name})`, 
-      type: 'STUDENT' 
+      type: 'STUDENT',
+      image: s.image
     }));
   }
 
@@ -159,7 +167,8 @@ export async function getRecipientsByContext() {
           results.push({ 
             id: s.user.id, 
             name: `Estudiante: ${s.firstName} ${s.lastName} (${as.course.name})`, 
-            type: 'STUDENT' 
+            type: 'STUDENT',
+            image: s.user.image
           });
         });
       });
@@ -192,7 +201,8 @@ export async function getRecipientsByContext() {
         results.push({ 
           id: as.teacher.user.id, 
           name: `Docente: ${as.teacher.firstName} ${as.teacher.lastName} (${as.subjectId})`, 
-          type: 'TEACHER' 
+          type: 'TEACHER',
+          image: as.teacher.user.image
         });
       });
     }

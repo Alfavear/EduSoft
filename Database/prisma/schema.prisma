@@ -12,6 +12,7 @@ model User {
   id               String         @id @default(cuid())
   password         String
   role             Role           @default(STUDENT)
+  image            String?        // Profile image (base64 or URL)
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   username         String         @unique

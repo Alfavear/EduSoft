@@ -52,9 +52,14 @@ export function UserDropdown({ session, role }: { session: any, role: string }) 
           justifyContent: 'center',
           fontWeight: 'bold',
           fontSize: '1rem',
-          boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
+          boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+          overflow: 'hidden'
         }}>
-          {session.user.name?.charAt(0).toUpperCase()}
+          {session.user.image ? (
+            <img src={session.user.image} alt="Perfil" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ) : (
+            session.user.name?.charAt(0).toUpperCase()
+          )}
         </div>
         
         <ChevronDown size={16} color="var(--text-muted)" style={{ transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />

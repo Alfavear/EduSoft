@@ -61,7 +61,29 @@ export default async function UsuariosPage({
               <tbody>
                 {users.map((user) => (
                   <tr key={user.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
-                    <td style={{ padding: '1rem', fontWeight: '500' }}>{user.username}</td>
+                    <td style={{ padding: '1rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <div style={{ 
+                          width: '32px', 
+                          height: '32px', 
+                          borderRadius: '50%', 
+                          backgroundColor: 'var(--bg-app)', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center',
+                          overflow: 'hidden',
+                          border: '1px solid var(--border-light)',
+                          flexShrink: 0
+                        }}>
+                          {user.image ? (
+                            <img src={user.image} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          ) : (
+                            <UsersIcon size={16} color="var(--text-muted)" />
+                          )}
+                        </div>
+                        <span style={{ fontWeight: '500' }}>{user.username}</span>
+                      </div>
+                    </td>
                     <td style={{ padding: '1rem' }}>
                       {user.role === "STUDENT" ? `${user.studentProfile?.firstName} ${user.studentProfile?.lastName}` : 
                        user.role === "TEACHER" ? `${user.teacherProfile?.firstName} ${user.teacherProfile?.lastName}` : "Administrador"}
