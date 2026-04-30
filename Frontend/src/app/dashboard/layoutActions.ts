@@ -14,7 +14,8 @@ export async function getTopBarData() {
 
     return {
       schoolName: school?.name || "EduSoft",
-      periodName: year?.periods[0]?.name || "Sin periodo activo"
+      periodName: year?.periods[0]?.name || "Sin periodo activo",
+      sessionTimeout: school?.sessionTimeout || 60
     };
   } catch (error) {
     console.error("Error fetching topbar data:", error);

@@ -23,7 +23,8 @@ export async function updateSchoolInfo(data: any) {
     const formattedData = {
       ...data,
       attendanceLimitDays: data.attendanceLimitDays ? parseInt(data.attendanceLimitDays) : 1,
-      alertThreshold: data.alertThreshold ? parseFloat(data.alertThreshold) : 3.0
+      alertThreshold: data.alertThreshold ? parseFloat(data.alertThreshold) : 3.0,
+      sessionTimeout: data.sessionTimeout ? parseInt(data.sessionTimeout) : 60
     };
 
     await prisma.schoolInfo.upsert({

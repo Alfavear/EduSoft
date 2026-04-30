@@ -9,6 +9,7 @@ import { createResetRequest } from "./actions";
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
   const [error, setError] = useState("");
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const [resetSuccess, setResetSuccess] = useState(false);
@@ -21,6 +22,7 @@ export default function LoginPage() {
     const result = await signIn("credentials", {
       username,
       password,
+      remember: remember ? "true" : "false",
       redirect: false,
     });
 
@@ -111,21 +113,32 @@ export default function LoginPage() {
               />
             </div>
 
-            <button 
-              type="button" 
-              onClick={() => setIsResetModalOpen(true)}
-              style={{ 
-                alignSelf: 'flex-start', 
-                background: 'none', 
-                border: 'none', 
-                color: 'var(--color-primary)', 
-                fontSize: '0.875rem', 
-                fontWeight: '600', 
-                cursor: 'pointer' 
-              }}
-            >
-              ¿Olvidó su contraseña?
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem' }}>
+                <input 
+                  type="checkbox" 
+                  checked={remember}
+                  onChange={(e) => setRemember(e.target.checked)}
+                  style={{ width: '1rem', height: '1rem', cursor: 'pointer' }}
+                />
+                No cerrar mi cuenta
+              </label>
+
+              <button 
+                type="button" 
+                onClick={() => setIsResetModalOpen(true)}
+                style={{ 
+                  background: 'none', 
+                  border: 'none', 
+                  color: 'var(--color-primary)', 
+                  fontSize: '0.875rem', 
+                  fontWeight: '600', 
+                  cursor: 'pointer' 
+                }}
+              >
+                ¿Olvidó su contraseña?
+              </button>
+            </div>
 
             <button type="submit" className="btn-primary" style={{ padding: '1rem', fontSize: '1rem', fontWeight: 'bold', marginTop: '1rem' }}>
               Iniciar Sesión

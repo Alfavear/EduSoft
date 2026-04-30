@@ -148,6 +148,7 @@ model SchoolInfo {
   updatedAt           DateTime @updatedAt
   alertThreshold      Float    @default(3.0)
   attendanceLimitDays Int      @default(1)
+  sessionTimeout      Int      @default(60) // In minutes
 }
 
 model Attendance {

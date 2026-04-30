@@ -4,7 +4,7 @@ import { useState } from "react";
 import { updateSchoolInfo } from "./schoolActions";
 import { Building, Save, Image as ImageIcon, Phone, MapPin, Hash, UserCheck, Mail } from "lucide-react";
 
-export function SchoolInfoForm({ initialData }: { initialData: any }) {
+export function SchoolInfoForm({ initialData, mode = "identity" }: { initialData: any, mode?: "identity" | "security" }) {
   const [formData, setFormData] = useState(initialData);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
@@ -29,13 +29,84 @@ export function SchoolInfoForm({ initialData }: { initialData: any }) {
     setLoading(true);
     const res = await updateSchoolInfo(formData);
     if (res.success) {
-      setMessage({ type: "success", text: "Información institucional actualizada correctamente." });
+      setMessage({ type: "success", text: "Información actualizada correctamente." });
       setTimeout(() => setMessage({ type: "", text: "" }), 3000);
     } else {
       setMessage({ type: "error", text: "Error al guardar la información." });
     }
     setLoading(false);
   };
+
+  if (mode === "security") {
+    return (
+      <div className="card" style={{ padding: '2.5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)', padding: '0.5rem', borderRadius: '10px' }}>
+              <ShieldCheck size={20} color="var(--color-primary)" />
+            </div>
+            Seguridad y Parámetros del Sistema
+          </h2>
+          {message.text && (
+            <div style={{ 
+              fontSize: '0.875rem', padding: '0.5rem 1rem', borderRadius: 'var(--radius)',
+              backgroundColor: message.type === 'success' ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)',
+              color: message.type === 'success' ? 'var(--color-success)' : 'var(--color-danger)',
+              border: `1px solid ${message.type === 'success' ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'}`
+            }}>
+              {message.text}
+            </div>
+          )}
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', marginBottom: '2.5rem' }}>
+            <div style={{ padding: '1.5rem', backgroundColor: 'var(--bg-app)', borderRadius: '15px', border: '1px solid var(--border-light)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                <Lock size={18} color="var(--color-primary)" />
+                <h3 style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--text-main)' }}>Sesión y Acceso</h3>
+              </div>
+              <div className="form-group">
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>Tiempo de Expiración de Sesión (Minutos)</label>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>Tiempo de inactividad antes de cerrar la sesión automáticamente.</p>
+                <input type="number" name="sessionTimeout" value={formData.sessionTimeout || 60} onChange={handleChange} className="input-field" style={{ width: '100%' }} min="5" />
+              </div>
+            </div>
+
+            <div style={{ padding: '1.5rem', backgroundColor: 'var(--bg-app)', borderRadius: '15px', border: '1px solid var(--border-light)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                <UserCheck size={18} color="var(--color-primary)" />
+                <h3 style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--text-main)' }}>Control de Asistencia</h3>
+              </div>
+              <div className="form-group">
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>Límite de Días para Asistencia</label>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>Días permitidos hacia atrás para registrar asistencia sin solicitud.</p>
+                <input type="number" name="attendanceLimitDays" value={formData.attendanceLimitDays || 1} onChange={handleChange} className="input-field" style={{ width: '100%' }} min="0" />
+              </div>
+            </div>
+
+            <div style={{ padding: '1.5rem', backgroundColor: 'var(--bg-app)', borderRadius: '15px', border: '1px solid var(--border-light)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                <Settings2 size={18} color="var(--color-primary)" />
+                <h3 style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--text-main)' }}>Alertas Académicas</h3>
+              </div>
+              <div className="form-group">
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>Umbral de Alerta Académica</label>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>Calificación mínima antes de disparar una alerta temprana (Promedio).</p>
+                <input type="number" step="0.1" name="alertThreshold" value={formData.alertThreshold || 3.0} onChange={handleChange} className="input-field" style={{ width: '100%' }} min="0" />
+              </div>
+            </div>
+          </div>
+
+          <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '2rem', display: 'flex', justifyContent: 'flex-end' }}>
+            <button type="submit" className="btn-primary" disabled={loading} style={{ padding: '0.75rem 2.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <Save size={18} /> {loading ? "Guardando..." : "Guardar Configuración"}
+            </button>
+          </div>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <div className="card" style={{ padding: '2.5rem' }}>
@@ -77,9 +148,6 @@ export function SchoolInfoForm({ initialData }: { initialData: any }) {
               )}
             </div>
             <input id="logo-upload" type="file" accept="image/*" onChange={handleLogoChange} style={{ display: 'none' }} />
-            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'center', lineHeight: '1.4' }}>
-              PNG o JPG recomendado.<br/>Fondo blanco/transparente.
-            </p>
           </div>
 
           {/* Form Fields */}
@@ -125,28 +193,12 @@ export function SchoolInfoForm({ initialData }: { initialData: any }) {
               </label>
               <input name="rectorName" value={formData.rectorName || ""} onChange={handleChange} className="input-field" placeholder="Nombre completo" style={{ width: '100%' }} />
             </div>
-
-            <div className="form-group" style={{ gridColumn: '1 / -1', marginTop: '1.5rem', padding: '1.5rem', backgroundColor: 'var(--bg-app)', borderRadius: '15px', border: '1px solid var(--border-light)' }}>
-              <h3 style={{ fontSize: '1rem', fontWeight: '700', marginBottom: '1.5rem', color: 'var(--text-main)', borderBottom: '1px solid var(--border-light)', paddingBottom: '0.75rem' }}>Parámetros del Sistema</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '2rem' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>Límite de Días para Asistencia</label>
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>Días permitidos hacia atrás para registrar asistencia sin solicitud.</p>
-                  <input type="number" name="attendanceLimitDays" value={formData.attendanceLimitDays || 1} onChange={handleChange} className="input-field" style={{ width: '100%' }} min="0" />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>Umbral de Alerta Académica</label>
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>Calificación mínima antes de disparar una alerta temprana (Promedio).</p>
-                  <input type="number" step="0.1" name="alertThreshold" value={formData.alertThreshold || 3.0} onChange={handleChange} className="input-field" style={{ width: '100%' }} min="0" />
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
         <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '2rem', display: 'flex', justifyContent: 'flex-end' }}>
-          <button type="submit" className="btn-primary" disabled={loading} style={{ padding: '0.75rem 2.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)' }}>
-            <Save size={18} /> {loading ? "Guardando..." : "Actualizar Información"}
+          <button type="submit" className="btn-primary" disabled={loading} style={{ padding: '0.75rem 2.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <Save size={18} /> {loading ? "Guardando..." : "Actualizar Identidad"}
           </button>
         </div>
       </form>

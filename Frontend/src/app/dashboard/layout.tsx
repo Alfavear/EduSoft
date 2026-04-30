@@ -36,10 +36,37 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter();
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [topBarData, setTopBarData] = useState({ schoolName: "EduSoft", periodName: "..." });
+  const [topBarData, setTopBarData] = useState({ schoolName: "EduSoft", periodName: "...", sessionTimeout: 60 });
 
   useEffect(() => {
-    getTopBarData().then(setTopBarData);
+    getTopBarData().then(data => {
+      setTopBarData(data);
+      
+      // Idle Timeout Logic
+      const timeoutMinutes = data.sessionTimeout || 60;
+      const timeoutMs = timeoutMinutes * 60 * 1000;
+      let idleTimer: any;
+
+      const resetTimer = () => {
+        if (idleTimer) clearTimeout(idleTimer);
+        // Only start timer if NOT 'remembered' (you can store this in cookie or session)
+        // For now, let's assume always if it's a school system
+        idleTimer = setTimeout(() => {
+          signOut({ callbackUrl: "/login?reason=timeout" });
+        }, timeoutMs);
+      };
+
+      // Events to track activity
+      const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+      events.forEach(evt => document.addEventListener(evt, resetTimer));
+      
+      resetTimer();
+
+      return () => {
+        events.forEach(evt => document.removeEventListener(evt, resetTimer));
+        if (idleTimer) clearTimeout(idleTimer);
+      };
+    });
   }, []);
 
   useEffect(() => {
