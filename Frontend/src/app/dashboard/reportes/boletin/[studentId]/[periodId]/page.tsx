@@ -141,7 +141,7 @@ export default async function BoletinPage({ params }: { params: Promise<{ studen
              lineHeight: '1.6',
              backgroundColor: '#fff'
            }}>
-             {student.observations || "No se registran observaciones adicionales para este periodo académico."}
+             {(student as any).observations || "No se registran observaciones adicionales para este periodo académico."}
            </div>
         </div>
 

@@ -35,6 +35,7 @@ model Student {
   address       String?
   bloodType     String?
   birthDate     DateTime?
+  observations  String?
   userId        String       @unique
   courseId      String
   createdAt     DateTime     @default(now())
