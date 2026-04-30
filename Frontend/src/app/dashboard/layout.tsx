@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 import Link from "next/link";
 import { NotificationBell } from "../components/NotificationBell";
+import { UserDropdown } from "../components/UserDropdown";
 
 import { 
   LayoutDashboard, 
@@ -192,22 +193,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <NotificationBell />
             <div style={{ width: '1px', height: '24px', backgroundColor: 'var(--border-light)' }}></div>
-            <a href="/dashboard/perfil" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none', color: 'inherit' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }} className="user-info-text">
-                <span style={{ fontWeight: '600', fontSize: '0.875rem' }}>{session.user.name}</span>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{(session.user as any).username}</span>
-              </div>
-              <div style={{ 
-                backgroundColor: role === 'ADMIN' ? 'var(--color-purple)' : role === 'TEACHER' ? 'var(--color-teal)' : 'var(--color-primary)', 
-                color: 'white', 
-                padding: '0.2rem 0.6rem', 
-                borderRadius: '2rem', 
-                fontSize: '0.7rem', 
-                fontWeight: 'bold' 
-              }}>
-                {role}
-              </div>
-            </a>
+            <UserDropdown session={session} role={role} />
           </div>
         </header>
 

@@ -42,7 +42,7 @@ export function PasswordForm({ userId }: { userId: string }) {
   };
 
   return (
-    <div className="card" style={{ padding: '2rem', maxWidth: '500px' }}>
+    <div id="password-form" className="card" style={{ padding: '2rem', maxWidth: '500px' }}>
       <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-main)' }}>
         <KeyRound color="var(--color-primary)" />
         Cambiar Contraseña
