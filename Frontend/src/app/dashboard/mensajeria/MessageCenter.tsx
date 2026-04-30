@@ -190,6 +190,7 @@ export function MessageCenter({ initialInbox, initialSent }: { initialInbox: any
                   {msg.content}
                 </div>
               </div>
+            </div>
             ))
           )}
         </div>
