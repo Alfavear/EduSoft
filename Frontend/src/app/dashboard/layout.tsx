@@ -176,6 +176,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </Link>
           )}
 
+          {(role === "ADMIN" || role === "TEACHER") && (
+            <Link href="/dashboard/observador" className={`nav-item ${pathname.includes('/observador') ? 'active' : ''}`}>
+              <ClipboardList size={20} />
+              <span>Observador</span>
+            </Link>
+          )}
+
           <Link href="/dashboard/calendario" className={`nav-item ${pathname.includes('/calendario') ? 'active' : ''}`}>
             <Calendar size={20} />
             <span>Calendario</span>
