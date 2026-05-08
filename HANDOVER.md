@@ -96,6 +96,13 @@ NEXTAUTH_URL="http://localhost:3000"
 - Aprobación administrativa en "Centro de Solicitudes" → resetea usuario/contraseña automáticamente.
 - **DB Model:** `PasswordResetRequest`.
 
+### Módulo: Observador del Estudiante (Fase 1.5)
+- Seguimiento conductual y académico por estudiante.
+- Gestión de Reuniones con Padres (`ParentMeeting`) y Compromisos (`Agreement`).
+- Generación de Expediente Institucional imprimible con historial completo.
+- Lógica de Matrícula Condicional automatizada.
+- **Actions:** `/dashboard/observador/observadorActions.ts`.
+
 ### Módulo: Gestión de Usuarios
 - CRUD de Estudiantes, Docentes y Administradores.
 - **Filtros:** Búsqueda por nombre/username (debounce 500ms), filtro por Rol.
@@ -162,6 +169,7 @@ enum InvoiceStatus { PENDING PARTIAL PAID OVERDUE }
 | Acciones de Calendario | `/Frontend/src/app/dashboard/calendario/actions.ts` |
 | Acciones de Horario | `/Frontend/src/app/dashboard/horario/actions.ts` |
 | Acciones de Reset | `/Frontend/src/app/login/actions.ts` |
+| Acciones de Observador | `/Frontend/src/app/dashboard/observador/observadorActions.ts` |
 
 ---
 
@@ -175,4 +183,4 @@ enum InvoiceStatus { PENDING PARTIAL PAID OVERDUE }
 6. **Server Actions:** Toda lógica de base de datos va en archivos `actions.ts` con `"use server"` al inicio.
 
 ---
-*HANDOVER actualizado: 29 de Abril de 2026 — Fase 1 completada. Listo para Fase 2: Tesorería.*
+*HANDOVER actualizado: 8 de Mayo de 2026 — Fase 1.5 completada. Listo para Fase 2: Mensajería y Tesorería.*

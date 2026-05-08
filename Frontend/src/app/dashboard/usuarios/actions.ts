@@ -161,8 +161,6 @@ export async function getStudentReport(studentId: string) {
     }
   });
 
-  // Explicitly check for observations to help TS if needed (it should be there)
-  console.log("Fetching report for student with observations status:", !!student?.observations);
 
   if (!student) return null;
 

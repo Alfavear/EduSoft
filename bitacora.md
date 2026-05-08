@@ -118,4 +118,37 @@ El sistema maneja 3 roles principales:
 - Reporte de recaudo mensual/anual para el directivo.
 
 ---
-*Bitácora actualizada: 29 de Abril de 2026 — Fase 1 cerrada.*
+---
+121: 
+122: ## [8 de Mayo de 2026] - Fase 1.5: Observador del Estudiante y Estabilización
+123: 
+124: ### Módulo: Observador del Estudiante (Seguimiento Conductual)
+125: - **Estructura Relacional:** Implementación de `Observation`, `FollowUp`, `ParentMeeting` y `Agreement` en el esquema de Prisma.
+126: - **Dashboard de Seguimiento:** Vista general de estudiantes con contadores automáticos de observaciones y reuniones.
+127: - **Expediente Institucional (Reporte PDF):** Generación de reportes exhaustivos con historial de faltas, seguimientos y firmas, optimizado para impresión (`@media print`).
+128: - **Lógica de Condicionalidad:** Automatización del estado "Matrícula Condicional" basado en el volumen de seguimientos.
+129: - **Gestión Docente:** Interfaz para crear observaciones categorizadas (`CONDUCTUAL`, `ACADEMICA`, `OTRA`) y programar reuniones con acudientes.
+130: 
+131: ### Estabilización Técnica y Build
+132: - **Compatibilidad Next.js 15+:** Refactorización de rutas dinámicas para manejar `params` como `Promise`, eliminando errores de hidratación y ejecución.
+133: - **Optimización de Prisma:** Migración de contadores manuales a la API `_count` de Prisma para mejorar el rendimiento en el renderizado de listas extensas.
+134: - **Corrección de Tipados:** Eliminación de errores "implicit any" mediante casting explícito y sincronización del cliente de Prisma en el monorepositorio.
+135: 
+136: ---
+137: 
+138: ## ✅ Estado Actual: FASE 1.5 COMPLETADA
+139: 
+140: | Módulo | Estado |
+141: |---|---|
+142: | Observador del Estudiante | ✅ Completado |
+143: | Reportes Institucionales (Expediente) | ✅ Completado |
+144: | Estabilización Next.js 15+ | ✅ Completado |
+145: 
+146: ---
+147: 
+148: ## 🚀 PRÓXIMOS PASOS: FASE 2 - Mensajería y Tesorería
+149: 
+150: **Objetivo:** Refinar el sistema de comunicación y comenzar el módulo financiero.
+151: 
+152: ---
+153: *Bitácora actualizada: 8 de Mayo de 2026 — Módulo Observador finalizado.*

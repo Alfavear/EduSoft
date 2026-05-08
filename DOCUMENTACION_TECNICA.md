@@ -356,6 +356,43 @@ model UnblockRequest {
   @@index([status, teacherId])
 }
 
+// --- Módulo: Observador del Estudiante ---
+
+model Observation {
+  id          String      @id @default(cuid())
+  studentId   String
+  teacherId   String
+  date        DateTime    @default(now())
+  type        String      // CONDUCTUAL, ACADEMICA
+  severity    String      // LEVE, MODERADA, GRAVE
+  description String      @db.Text
+  
+  student     Student     @relation(fields: [studentId], references: [id])
+  teacher     Teacher     @relation(fields: [teacherId], references: [id])
+  followUps   FollowUp[]
+}
+
+model FollowUp {
+  id            String      @id @default(cuid())
+  observationId String
+  date          DateTime    @default(now())
+  description   String      @db.Text
+  
+  observation   Observation @relation(fields: [observationId], references: [id], onDelete: Cascade)
+}
+
+model ParentMeeting {
+  id          String   @id @default(cuid())
+  studentId   String
+  teacherId   String
+  date        DateTime
+  reason      String
+  notes       String?  @db.Text
+  
+  student     Student  @relation(fields: [studentId], references: [id])
+  teacher     Teacher  @relation(fields: [teacherId], references: [id])
+}
+
 enum Role {
   ADMIN
   TEACHER

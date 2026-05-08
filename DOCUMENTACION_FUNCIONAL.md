@@ -792,10 +792,76 @@ EduSoft implementa múltiples capas de seguridad:
 - ✅ **Reportes Avanzados** - Análisis predictivo de desempeño
 - ✅ **Integración con SMS/WhatsApp** - Notificaciones más efectivas
 - ✅ **App Móvil** - Acceso desde teléfono
+- ✅ **Observador del Estudiante** - Seguimiento conductual integral
 - ✅ **Control de Bienestar** - Seguimiento de estudiantes en riesgo
 - ✅ **Biblioteca Digital** - Gestión de recursos educativos
 
 ---
+
+## 📋 MÓDULO 5: OBSERVADOR DEL ESTUDIANTE
+
+### 5.1 🔍 **Seguimiento Conductual Integral**
+
+#### ¿Qué es?
+Un sistema digital centralizado para registrar y monitorear el comportamiento, méritos y compromisos de los estudiantes a lo largo de su vida escolar.
+
+#### Funcionalidades disponibles:
+
+| Función | Descripción |
+|---------|------------|
+| **Registro de Observaciones** | Documentar faltas (Leves, Moderadas, Graves) o méritos académicos |
+| **Línea de Tiempo** | Historial cronológico de todo el comportamiento del estudiante |
+| **Seguimientos** | Registro de intervenciones y avances después de una observación |
+| **Reuniones con Padres** | Programación y registro de actas de reuniones con acudientes |
+| **Matrícula Condicional** | Automatización del estatus académico según comportamiento |
+
+#### 🎯 Casos de uso:
+
+<details>
+<summary>📝 <strong>Caso 1: Registro de falta y seguimiento</strong></summary>
+
+**Proceso:**
+1. Docente identifica una falta moderada (ej: irrespeto recurrente)
+2. Accede al perfil del estudiante en el Observador
+3. Crea una **Observación** detallando los hechos y la gravedad
+4. El sistema registra el evento y alerta al coordinador
+5. A la semana siguiente, el docente añade un **Seguimiento** notando mejoría
+6. La historia queda documentada para el boletín final
+
+**Resultado:** Documentación clara y objetiva del proceso disciplinario
+
+</details>
+
+<details>
+<summary>📝 <strong>Caso 2: Automatización de Matrícula Condicional</strong></summary>
+
+**Lógica:**
+1. Si un estudiante acumula **3 seguimientos** de faltas moderadas/graves
+2. El sistema marca automáticamente al estudiante con estatus **"Condicional"**
+3. El banner del estudiante muestra una alerta visual permanente
+4. Se requiere una reunión obligatoria con padres para firmar compromisos
+
+**Beneficio:** Aplicación justa y automatizada de los manuales de convivencia
+
+</details>
+
+---
+
+### 5.2 📄 **Expediente del Estudiante (Reporte Imprimible)**
+
+#### ¿Qué es?
+Generación de un documento oficial que resume toda la historia conductual del estudiante para ser anexado a su hoja de vida física o presentado en reuniones.
+
+#### Características del reporte:
+- ✅ **Diseño profesional** tipo documento oficial
+- ✅ **Resumen estadístico** (Total observaciones, reuniones, seguimientos)
+- ✅ **Detalle cronológico** de todos los incidentes
+- ✅ **Secciones de firmas** para Coordinación y Padres
+- ✅ **Printer-friendly** optimizado para impresión en papel bond/carta
+
+---
+
+## 🎨 EXPERIENCIA DE USUARIO
 
 ## 🌟 ¿Por qué elegir EduSoft?
 

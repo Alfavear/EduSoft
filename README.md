@@ -4,7 +4,7 @@ EduSoft es una plataforma moderna diseñada para simplificar la administración 
 
 ## 🚀 Tecnologías Principales
 
-- **Frontend:** Next.js 15+ (App Router), React 19, Tailwind CSS (para estructura base) y Vanilla CSS para rediseño vibrante.
+- **Frontend:** Next.js 16+ (App Router), React 19, Tailwind CSS (para estructura base) y Vanilla CSS para rediseño vibrante.
 - **Backend:** Next.js Server Actions para lógica de negocio segura y eficiente.
 - **Base de Datos:** PostgreSQL (Neon.tech) con **Prisma ORM**.
 - **Autenticación:** NextAuth.js (Auth.js) con estrategia basada en credenciales personalizadas.
@@ -37,6 +37,12 @@ El proyecto está organizado como un monorepositorio estructurado:
 ### 👨‍🎓 Estudiante
 - **Dashboard Personal:** Visualización de cursos activos.
 - **Boletín en Tiempo Real:** Consulta de notas por periodo con cálculo automático de promedio ponderado.
+
+### 📋 Observador del Estudiante
+- **Seguimiento Conductual:** Registro de observaciones disciplinarias y académicas.
+- **Actas de Reunión:** Gestión de reuniones con padres y compromisos firmados.
+- **Expediente Institucional:** Generación automática de historial conductual para procesos de coordinación.
+- **Alertas de Matrícula:** Notificación automática de estados condicionales por comportamiento.
 
 ### 💰 Tesorería (En Desarrollo)
 - **Gestión de Cobros:** Creación de conceptos de pensión y matrículas.

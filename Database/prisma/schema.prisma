@@ -12,7 +12,7 @@ model User {
   id               String         @id @default(cuid())
   password         String
   role             Role           @default(STUDENT)
-  image            String?        // Profile image (base64 or URL)
+  image            String? // Profile image (base64 or URL)
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   username         String         @unique
@@ -25,25 +25,27 @@ model User {
 }
 
 model Student {
-  id            String       @id @default(cuid())
-  firstName     String
-  lastName      String
-  documentId    String?
-  guardianName  String       @default("No registrado")
-  guardianPhone String       @default("0000000000")
-  guardianEmail String?
-  address       String?
-  bloodType     String?
-  birthDate     DateTime?
-  observations  String?
-  userId        String       @unique
-  courseId      String
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  attendances   Attendance[]
-  grades        Grade[]
-  course        Course       @relation(fields: [courseId], references: [id])
-  user          User         @relation(fields: [userId], references: [id])
+  id             String          @id @default(cuid())
+  firstName      String
+  lastName       String
+  documentId     String?
+  guardianName   String          @default("No registrado")
+  guardianPhone  String          @default("0000000000")
+  guardianEmail  String?
+  address        String?
+  bloodType      String?
+  birthDate      DateTime?
+  observations   Observation[]
+  parentMeetings ParentMeeting[]
+  isConditional  Boolean         @default(false)
+  userId         String          @unique
+  courseId       String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  attendances    Attendance[]
+  grades         Grade[]
+  course         Course          @relation(fields: [courseId], references: [id])
+  user           User            @relation(fields: [userId], references: [id])
 }
 
 model Teacher {
@@ -62,6 +64,8 @@ model Teacher {
   directedCourses Course[]            @relation("CourseDirector")
   user            User                @relation(fields: [userId], references: [id])
   assignments     TeacherAssignment[]
+  observations    Observation[]
+  parentMeetings  ParentMeeting[]
 }
 
 model Course {
@@ -245,6 +249,85 @@ model Notification {
   user      User     @relation(fields: [userId], references: [id])
 }
 
+model Observation {
+  id          String          @id @default(cuid())
+  studentId   String
+  teacherId   String
+  date        DateTime        @default(now())
+  type        ObservationType
+  severity    Severity
+  description String          @db.Text
+
+  student    Student         @relation(fields: [studentId], references: [id])
+  teacher    Teacher         @relation(fields: [teacherId], references: [id])
+  followUps  FollowUp[]
+  agreements Agreement[]
+  meetings   ParentMeeting[]
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+}
+
+model FollowUp {
+  id            String   @id @default(cuid())
+  observationId String
+  date          DateTime @default(now())
+  description   String   @db.Text
+
+  observation Observation @relation(fields: [observationId], references: [id], onDelete: Cascade)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model ParentMeeting {
+  id            String        @id @default(cuid())
+  studentId     String
+  teacherId     String
+  date          DateTime
+  status        MeetingStatus @default(PENDING)
+  notes         String?       @db.Text
+  observationId String?
+
+  student     Student      @relation(fields: [studentId], references: [id])
+  teacher     Teacher      @relation(fields: [teacherId], references: [id])
+  observation Observation? @relation(fields: [observationId], references: [id])
+  agreements  Agreement[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Agreement {
+  id          String   @id @default(cuid())
+  description String   @db.Text
+  date        DateTime @default(now())
+
+  observationId String?
+  observation   Observation? @relation(fields: [observationId], references: [id])
+
+  parentMeetingId String?
+  parentMeeting   ParentMeeting? @relation(fields: [parentMeetingId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ObservationType {
+  CONDUCTUAL
+  ACADEMICA
+  OTRA
+}
+
+enum Severity {
+  LEVE
+  MODERADA
+  GRAVE
+}
+
+enum MeetingStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
 enum AttendanceStatus {
   PRESENT
   ABSENT
@@ -277,7 +360,7 @@ model CalendarEvent {
   endDate     DateTime?
   type        EventType @default(OTHER)
   isGlobal    Boolean   @default(true)
-  targetRole  Role?     // If null, visible to all in the scope
+  targetRole  Role? // If null, visible to all in the scope
   courseId    String?
   creatorId   String?
   createdAt   DateTime  @default(now())
@@ -306,12 +389,12 @@ enum EventType {
 }
 
 model PasswordResetRequest {
-  id              String        @id @default(cuid())
-  documentType    String
-  documentId      String
-  status          RequestStatus @default(PENDING)
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  id           String        @id @default(cuid())
+  documentType String
+  documentId   String
+  status       RequestStatus @default(PENDING)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 }
 
 model AuditLog {
