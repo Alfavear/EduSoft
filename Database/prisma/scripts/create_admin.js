@@ -1,4 +1,4 @@
-const { PrismaClient } = require('./Frontend/node_modules/@prisma/client');
+const { PrismaClient } = require('../../../Frontend/node_modules/@prisma/client');
 const bcrypt = require('bcryptjs');
 
 const prisma = new PrismaClient();
