@@ -1618,7 +1618,31 @@ docs: actualizar documentación técnica
 
 ---
 
-**Versión:** 1.0
-**Última actualización:** Mayo 2026
-**Para desarrolladores de EduSoft**
+## 📋 MÓDULO: REPORTE INSTITUCIONAL ROBUSTECIDO
+
+### 13.1 Arquitectura de Consultas Relacionales
+Para los nuevos reportes, se utiliza un patrón de **Eager Loading** mediante Prisma para minimizar las peticiones N+1:
+
+```typescript
+// Ejemplo: Directorio de Docentes con Carga Académica
+const teachers = await prisma.teacher.findMany({
+  include: {
+    assignments: {
+      include: {
+        course: true,
+        subject: true
+      }
+    }
+  },
+  orderBy: { lastName: 'asc' }
+});
+```
+
+### 13.2 Optimización de Impresión
+Se implementó un sistema de componentes compartidos para la generación de PDFs vía navegador:
+- **PrintButton**: Componente de cliente que dispara `window.print()`.
+- **Global Print CSS**: Clases `.no-print` para ocultar navegación y botones durante la generación del documento.
+
+---
+*Documentación Técnica actualizada: 8 de Mayo de 2026 — Centro de Reportes robustecido.*
 

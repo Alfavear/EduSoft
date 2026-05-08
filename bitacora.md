@@ -146,9 +146,18 @@ El sistema maneja 3 roles principales:
 145: 
 146: ---
 147: 
-148: ## 🚀 PRÓXIMOS PASOS: FASE 2 - Mensajería y Tesorería
-149: 
-150: **Objetivo:** Refinar el sistema de comunicación y comenzar el módulo financiero.
-151: 
-152: ---
-153: *Bitácora actualizada: 8 de Mayo de 2026 — Módulo Observador finalizado.*
+148: ### Centro de Reportes Robustecido
+151: - **Directorio de Docentes:** Listado maestro con contacto, especialidad y carga académica detallada.
+152: - **Central de Observador:** Acceso unificado para la generación masiva de expedientes disciplinarios.
+153: - **Reporte de Matrícula Condicional:** Filtro crítico para el seguimiento de estudiantes con compromisos institucionales.
+154: - **Malla Curricular Dinámica:** Resumen estructural de materias asignadas por curso y docente responsable.
+155: - **Optimización para Impresión:** Todos los nuevos reportes incluyen soporte nativo para impresión profesional y botones interactivos.
+156: 
+157: ---
+158: 
+159: ## 🚀 PRÓXIMOS PASOS: FASE 2 - Mensajería y Tesorería
+160: 
+161: **Objetivo:** Refinar el sistema de comunicación y comenzar el módulo financiero.
+162: 
+163: ---
+164: *Bitácora actualizada: 8 de Mayo de 2026 — Centro de Reportes robustecido.*

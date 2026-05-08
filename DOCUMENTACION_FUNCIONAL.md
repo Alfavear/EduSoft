@@ -792,13 +792,39 @@ EduSoft implementa múltiples capas de seguridad:
 - ✅ **Reportes Avanzados** - Análisis predictivo de desempeño
 - ✅ **Integración con SMS/WhatsApp** - Notificaciones más efectivas
 - ✅ **App Móvil** - Acceso desde teléfono
-- ✅ **Observador del Estudiante** - Seguimiento conductual integral
-- ✅ **Control de Bienestar** - Seguimiento de estudiantes en riesgo
-- ✅ **Biblioteca Digital** - Gestión de recursos educativos
+### 7.5 📋 **Observador del Estudiante**
+
+#### ¿Qué es?
+Sistema integral de seguimiento conductual y académico para registrar el historial de comportamiento, compromisos y reuniones con acudientes.
+
+#### Funcionalidades disponibles:
+
+| Función | Descripción |
+|---------|------------|
+| **Registro de Observaciones** | Anotaciones disciplinarias o académicas con nivel de severidad. |
+| **Seguimiento (Follow-up)** | Registro de acciones tomadas tras una observación. |
+| **Actas de Reunión** | Documentación de encuentros con padres/acudientes. |
+| **Compromisos (Agreements)** | Listado de acuerdos firmados por el estudiante y acudiente. |
+| **Matrícula Condicional** | Alerta automática para estudiantes con seguimiento crítico. |
+| **Expediente PDF** | Generación de reporte imprimible con historial completo y firmas. |
 
 ---
 
-## 📋 MÓDULO 5: OBSERVADOR DEL ESTUDIANTE
+## 📊 MÓDULO 8: CENTRO DE REPORTES AVANZADOS
+
+### 8.1 👩‍🏫 **Directorio de Docentes**
+Listado maestro que consolida la información de contacto, especialidades y la **carga académica** detallada (materias y grados asignados) de todo el personal docente.
+
+### 8.2 📋 **Central de Observador**
+Panel unificado para buscar estudiantes y generar de manera masiva o individual sus expedientes institucionales de comportamiento.
+
+### 8.3 ⚠️ **Reporte de Matrículas Condicionales**
+Informe especializado para coordinación y rectoría que lista a los estudiantes bajo seguimiento crítico, facilitando la toma de decisiones disciplinarias.
+
+### 8.4 🗺️ **Malla Curricular (Asignaciones)**
+Vista estructural que muestra la organización académica de la institución, detallando qué docente imparte cada asignatura en cada grado.
+
+---
 
 ### 5.1 🔍 **Seguimiento Conductual Integral**
 

@@ -38,11 +38,15 @@ El proyecto está organizado como un monorepositorio estructurado:
 - **Dashboard Personal:** Visualización de cursos activos.
 - **Boletín en Tiempo Real:** Consulta de notas por periodo con cálculo automático de promedio ponderado.
 
-### 📋 Observador del Estudiante
-- **Seguimiento Conductual:** Registro de observaciones disciplinarias y académicas.
-- **Actas de Reunión:** Gestión de reuniones con padres y compromisos firmados.
 - **Expediente Institucional:** Generación automática de historial conductual para procesos de coordinación.
 - **Alertas de Matrícula:** Notificación automática de estados condicionales por comportamiento.
+45: 
+46: ### 📊 Centro de Reportes (Robustecido)
+47: - **Directorio de Docentes:** Información de contacto, especialidades y carga académica por profesor.
+48: - **Malla Curricular:** Resumen de asignaciones de materias y docentes por cada grado.
+49: - **Gestión de Observador:** Centralización de todos los expedientes disciplinarios imprimibles.
+50: - **Cuadro de Honor:** Identificación automática de excelencia académica.
+51: - **Planillas Consolidadas:** Sábanas de notas dinámicas para cierre de periodos.
 
 ### 💰 Tesorería (En Desarrollo)
 - **Gestión de Cobros:** Creación de conceptos de pensión y matrículas.

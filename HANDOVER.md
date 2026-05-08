@@ -62,10 +62,14 @@ NEXTAUTH_URL="http://localhost:3000"
 - Bloqueo de periodos + flujo de solicitudes de habilitación temporal (24h).
 - Admin con acceso global a todas las planillas.
 
-### Módulo: Boletines e Informes
+### Módulo: Centro de Reportes (Fase 1.5 - Robustecido)
 - Boletín individual de Estudiante (imprimible/PDF).
 - Planilla Consolidada Dinámica con selector de curso y métricas de aprobación.
 - Cuadro de Honor y Alertas de Inasistencia.
+- **Directorio de Docentes:** Carga académica, contacto y especialidad.
+- **Malla Curricular:** Relación estructural Materia-Curso-Docente.
+- **Central de Observador:** Generación masiva de expedientes.
+- **Estado:** Todos optimizados para `@media print` con encabezado institucional.
 
 ### Módulo: Comunicación
 - Mensajería interna con buzón Entrada/Enviados.
@@ -183,4 +187,4 @@ enum InvoiceStatus { PENDING PARTIAL PAID OVERDUE }
 6. **Server Actions:** Toda lógica de base de datos va en archivos `actions.ts` con `"use server"` al inicio.
 
 ---
-*HANDOVER actualizado: 8 de Mayo de 2026 — Fase 1.5 completada. Listo para Fase 2: Mensajería y Tesorería.*
+*HANDOVER actualizado: 8 de Mayo de 2026 — Centro de Reportes robustecido.*
