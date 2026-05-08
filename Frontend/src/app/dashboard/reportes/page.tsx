@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Star, AlertTriangle, FileText, ClipboardList } from "lucide-react";
+import { Star, AlertTriangle, FileText, ClipboardList, Users, ShieldAlert, BookOpen } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
 export default async function ReportsPage() {
@@ -61,6 +61,58 @@ export default async function ReportsPage() {
             <div>
               <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Boletines Escolares</h2>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Generación e impresión de reportes de calificaciones por estudiante para el periodo actual.</p>
+            </div>
+          </div>
+        </Link>
+
+        {/* Observador del Estudiante */}
+        <Link href="/dashboard/reportes/observador" style={{ textDecoration: 'none' }}>
+          <div className="card interactive-card" style={{ padding: '2rem', display: 'flex', gap: '1.5rem' }}>
+            <div style={{ backgroundColor: 'rgba(139, 92, 246, 0.1)', color: '#8b5cf6', padding: '1.25rem', borderRadius: '1rem' }}>
+              <ClipboardList size={32} />
+            </div>
+            <div>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Expedientes de Observador</h2>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Acceso directo a los expedientes institucionales y seguimiento conductual.</p>
+            </div>
+          </div>
+        </Link>
+
+        {/* Directorio de Docentes */}
+        <Link href="/dashboard/reportes/docentes" style={{ textDecoration: 'none' }}>
+          <div className="card interactive-card" style={{ padding: '2rem', display: 'flex', gap: '1.5rem' }}>
+            <div style={{ backgroundColor: 'rgba(236, 72, 153, 0.1)', color: '#ec4899', padding: '1.25rem', borderRadius: '1rem' }}>
+              <Users size={32} />
+            </div>
+            <div>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Directorio de Docentes</h2>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Listado maestro de profesores con especialidades, contacto y carga académica.</p>
+            </div>
+          </div>
+        </Link>
+
+        {/* Matrícula Condicional */}
+        <Link href="/dashboard/reportes/condicionales" style={{ textDecoration: 'none' }}>
+          <div className="card interactive-card" style={{ padding: '2rem', display: 'flex', gap: '1.5rem' }}>
+            <div style={{ backgroundColor: 'rgba(249, 115, 22, 0.1)', color: '#f97316', padding: '1.25rem', borderRadius: '1rem' }}>
+              <ShieldAlert size={32} />
+            </div>
+            <div>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Matrícula Condicional</h2>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Informe de estudiantes con compromisos disciplinarios o académicos críticos.</p>
+            </div>
+          </div>
+        </Link>
+
+        {/* Resumen de Asignaciones */}
+        <Link href="/dashboard/reportes/asignaciones" style={{ textDecoration: 'none' }}>
+          <div className="card interactive-card" style={{ padding: '2rem', display: 'flex', gap: '1.5rem' }}>
+            <div style={{ backgroundColor: 'rgba(6, 182, 212, 0.1)', color: '#06b6d4', padding: '1.25rem', borderRadius: '1rem' }}>
+              <BookOpen size={32} />
+            </div>
+            <div>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Malla Curricular</h2>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Resumen estructural de materias asignadas por curso y docente responsable.</p>
             </div>
           </div>
         </Link>
