@@ -110,8 +110,8 @@ export default async function DashboardPage() {
                               {s.average.toFixed(2)}
                             </span>
                           </td>
-                          <td style={{ padding: '1rem' }}>
-                            <Link href={`/dashboard/usuarios?id=${s.id}`} style={{ color: 'var(--color-primary)', textDecoration: 'none', fontSize: '0.875rem' }}>Ver Detalle</Link>
+                          <td style={{ padding: '1rem', textAlign: 'center' }}>
+                            <Link href={`/dashboard/observador/${s.id}`} style={{ color: 'var(--color-primary)', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 'bold' }}>Ir al Observador</Link>
                           </td>
                         </tr>
                       ))
