@@ -18,7 +18,8 @@ export async function getEnrollments(filters?: { academicYearId?: string; course
       academicYear: true,
       remedials: {
         include: { subject: true }
-      }
+      },
+      officialDocuments: true
     },
     orderBy: { student: { lastName: 'asc' } }
   });
@@ -230,8 +231,13 @@ export async function uploadPrematricula(enrollmentId: string, url: string) {
   return enrollment;
 }
 
-export async function registerStudent(data: any) {
+export async function registerStudent(formData: FormData) {
   try {
+    const data: any = {};
+    formData.forEach((value, key) => {
+      if (typeof value === 'string') data[key] = value;
+    });
+
     const username = `${data.firstName.trim().toLowerCase()}.${data.lastName.trim().toLowerCase()}`.replace(/\s+/g, '');
     const user = await prisma.user.create({
       data: {
@@ -266,6 +272,26 @@ export async function registerStudent(data: any) {
         isVictim: data.isVictim === "true"
       }
     });
+
+    // Procesar archivos si existen
+    const idFile = formData.get("idDocument") as File;
+    const medFile = formData.get("medicalCert") as File;
+
+    if (idFile && idFile.size > 0) {
+      const fd = new FormData();
+      fd.append("file", idFile);
+      fd.append("studentId", student.id);
+      fd.append("name", "Documento de Identidad");
+      await uploadOfficialDocument(fd);
+    }
+
+    if (medFile && medFile.size > 0) {
+      const fd = new FormData();
+      fd.append("file", medFile);
+      fd.append("studentId", student.id);
+      fd.append("name", "Certificado Médico / EPS");
+      await uploadOfficialDocument(fd);
+    }
 
     revalidatePath("/dashboard/matriculas");
     return { success: true, data: student };

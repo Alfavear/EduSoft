@@ -29,13 +29,22 @@ export function StudentRegistrationForm({ courses, onClose }: { courses: any[], 
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [files, setFiles] = useState<{ [key: string]: File | null }>({
+    idDocument: null,
+    medicalCert: null
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
-    const res = await registerStudent(formData);
+    const submitData = new FormData();
+    Object.entries(formData).forEach(([key, value]) => submitData.append(key, value));
+    if (files.idDocument) submitData.append("idDocument", files.idDocument);
+    if (files.medicalCert) submitData.append("medicalCert", files.medicalCert);
+
+    const res = await registerStudent(submitData);
     if (res.success) {
       onClose();
     } else {
@@ -162,6 +171,34 @@ export function StudentRegistrationForm({ courses, onClose }: { courses: any[], 
               </div>
             </div>
           </div>
+
+          {/* SECCIÓN 2.5: Documentos Adjuntos (NUEVO) */}
+          <div style={{ padding: '1.5rem', border: '1px solid var(--color-primary)', borderRadius: 'var(--radius)', backgroundColor: 'rgba(59, 130, 246, 0.05)' }}>
+            <h3 style={{ fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Shield size={16} color="var(--color-primary)" /> Soportes Físicos Obligatorios
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+              <div>
+                <label className="label">Documento de Identidad (PDF/JPG)</label>
+                <input 
+                  type="file" 
+                  className="input-field" 
+                  onChange={e => setFiles({...files, idDocument: e.target.files?.[0] || null})}
+                  accept=".pdf,.jpg,.jpeg,.png"
+                />
+              </div>
+              <div>
+                <label className="label">Certificado Médico / EPS (PDF)</label>
+                <input 
+                  type="file" 
+                  className="input-field" 
+                  onChange={e => setFiles({...files, medicalCert: e.target.files?.[0] || null})}
+                  accept=".pdf,.jpg,.jpeg,.png"
+                />
+              </div>
+            </div>
+          </div>
+
 
           {/* SECCIÓN 3: Acudiente y Curso */}
           <div style={{ padding: '1.5rem', backgroundColor: 'rgba(59, 130, 246, 0.05)', borderRadius: 'var(--radius)', border: '1px solid rgba(59, 130, 246, 0.1)' }}>

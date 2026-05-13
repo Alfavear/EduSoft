@@ -128,21 +128,35 @@ export function EnrollmentList({
                     {en.finalAverage ? en.finalAverage.toFixed(2) : '—'}
                   </td>
                   <td style={{ padding: '1rem', textAlign: 'center' }}>
-                    {en.prematriculaUrl ? (
+                    {en.officialDocuments?.some((d: any) => d.name === "Prematrícula Oficial") ? (
                       <div style={{ color: 'var(--color-success)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.25rem' }}>
                         <FileCheck size={16} /> <span style={{ fontSize: '0.7rem' }}>Cargada</span>
                       </div>
                     ) : (
+                      <div style={{ position: 'relative' }}>
+                      <input 
+                        type="file" 
+                        id={`pre-${en.id}`}
+                        style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }}
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const fd = new FormData();
+                            fd.append("file", file);
+                            fd.append("enrollmentId", en.id);
+                            fd.append("name", "Prematrícula Oficial");
+                            await uploadOfficialDocument(fd);
+                            handleFilter();
+                          }
+                        }}
+                      />
                       <button 
                         className="btn-secondary" 
                         style={{ fontSize: '0.65rem', padding: '0.2rem 0.5rem' }}
-                        onClick={() => {
-                          const url = prompt("Ingrese la URL del documento de prematrícula:");
-                          if (url) uploadPrematricula(en.id, url);
-                        }}
                       >
                         Cargar
                       </button>
+                    </div>
                     )}
                   </td>
                   <td style={{ padding: '1rem' }}>
