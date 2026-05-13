@@ -792,12 +792,52 @@ EduSoft implementa múltiples capas de seguridad:
 - ✅ **Reportes Avanzados** - Análisis predictivo de desempeño
 - ✅ **Integración con SMS/WhatsApp** - Notificaciones más efectivas
 - ✅ **App Móvil** - Acceso desde teléfono
-### 7.5 📋 **Observador del Estudiante**
+### 1.6 📋 **Registro Integral de Matrículas (SIMAT)**
 
 #### ¿Qué es?
-Sistema integral de seguimiento conductual y académico para registrar el historial de comportamiento, compromisos y reuniones con acudientes.
+Formulario avanzado de registro que cumple con los estándares del Ministerio de Educación Nacional (MEN) para la captura de variables SIMAT.
 
-#### Funcionalidades disponibles:
+#### Funcionalidades:
+- **Caracterización Completa:** Registro de estrato, SISBÉN, EPS, grupo étnico y población víctima.
+- **Beneficios:** Marcación de beneficiarios PAE y transporte escolar.
+- **Inclusión:** Registro detallado de tipos de discapacidad.
+- **Gestión de Acudientes:** Vinculación obligatoria de datos de contacto del responsable legal.
+- **Creación Automática:** Generación instantánea de credenciales de acceso para el nuevo estudiante.
+
+---
+
+### 1.7 📁 **Repositorio de Documentos Físicos**
+
+#### ¿Qué es?
+Sistema de archivo digital para almacenar y gestionar los soportes físicos obligatorios de cada estudiante.
+
+#### Funcionalidades:
+- **Carga de Archivos Reales:** Soporte para PDF e imágenes (JPG/PNG).
+- **Lista de Chequeo Normativa:** Control visual de documentos obligatorios (Registro Civil, Tarjeta de Identidad, Certificado Médico).
+- **Carpeta Digital:** Repositorio centralizado accesible desde la ficha del estudiante.
+- **Auditoría:** Trazabilidad de quién cargó cada documento y en qué fecha.
+
+---
+
+## 📋 MÓDULO 4: SEGUIMIENTO Y CONVIVENCIA
+
+### 4.1 👁️ **Observador del Estudiante (Reingeniería)**
+
+#### ¿Qué es?
+Ecosistema premium para el seguimiento conductual, compromisos y expedientes disciplinarios.
+
+#### Funcionalidades:
+- **Diseño Premium con Filtros:** Visualización organizada por tarjetas con métricas de faltas y reuniones.
+- **Soportes de Evidencia:** Capacidad de adjuntar fotos o PDFs (memorandos firmados) a cada observación.
+- **Matrícula Condicional:** 
+  - **Umbral Configurable:** El sistema detecta automáticamente estudiantes en riesgo según el número de faltas graves definido.
+  - **Gestión Manual:** Botón de activación/remoción de estado condicional para coordinadores.
+- **Seguimiento de Evolución:** Registro de compromisos y seguimientos posteriores a una falta.
+- **Citaciones:** Gestión de reuniones con padres y registro de acuerdos firmados.
+
+---
+
+## 💰 MÓDULO 5: TESORERÍA Y FINANZAS
 
 | Función | Descripción |
 |---------|------------|

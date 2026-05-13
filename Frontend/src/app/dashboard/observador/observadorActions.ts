@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { ObservationType, Severity, MeetingStatus } from "@prisma/client";
+import { uploadOfficialDocument } from "../matriculas/actions";
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -20,18 +21,32 @@ export async function getStudentsForObserver() {
   return await prisma.student.findMany({
     include: {
       course: true,
+      observations: {
+        select: { severity: true }
+      },
+      parentMeetings: {
+        select: { id: true }
+      },
       _count: {
-        select: { 
+        select: {
           observations: true,
           parentMeetings: true
         }
       }
     },
-    orderBy: [
-      { course: { name: 'asc' } },
-      { lastName: 'asc' },
-      { firstName: 'asc' }
-    ]
+    orderBy: { lastName: 'asc' }
+  });
+}
+
+export async function getObserverConfig() {
+  return await prisma.schoolInfo.findFirst({
+    select: { conditionalThreshold: true }
+  });
+}
+
+export async function getCourses() {
+  return await prisma.course.findMany({
+    orderBy: { name: 'asc' }
   });
 }
 
@@ -60,26 +75,42 @@ export async function getStudentObserverData(studentId: string) {
   });
 }
 
-export async function createObservation(data: {
-  studentId: string;
-  teacherId: string;
-  type: ObservationType;
-  severity: Severity;
-  description: string;
-}) {
-  const observation = await prisma.observation.create({
-    data: {
-      studentId: data.studentId,
-      teacherId: data.teacherId,
-      type: data.type,
-      severity: data.severity,
-      description: data.description,
-    }
-  });
+export async function createObservation(formData: FormData) {
+  try {
+    const studentId = formData.get("studentId") as string;
+    const teacherId = formData.get("teacherId") as string;
+    const type = formData.get("type") as ObservationType;
+    const severity = formData.get("severity") as Severity;
+    const description = formData.get("description") as string;
+    const file = formData.get("file") as File;
 
-  revalidatePath(`/dashboard/observador/${data.studentId}`);
-  revalidatePath("/dashboard/observador");
-  return observation;
+    const observation = await prisma.observation.create({
+      data: {
+        studentId,
+        teacherId,
+        type,
+        severity,
+        description,
+      }
+    });
+
+    if (file && file.size > 0) {
+      const uploadFd = new FormData();
+      uploadFd.append("file", file);
+      uploadFd.append("studentId", studentId);
+      uploadFd.append("name", `Soporte Observación - ${new Date().toLocaleDateString()}`);
+      // También podríamos relacionarlo con la observación si el modelo lo permite, 
+      // pero por ahora lo guardamos en el repositorio general del estudiante.
+      await uploadOfficialDocument(uploadFd);
+    }
+
+    revalidatePath(`/dashboard/observador/${studentId}`);
+    revalidatePath("/dashboard/observador");
+    return { success: true, data: observation };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: "Error al crear la observación." };
+  }
 }
 
 export async function addFollowUp(data: {
@@ -165,4 +196,19 @@ export async function addAgreement(data: {
 
   revalidatePath(`/dashboard/observador/${data.studentId}`);
   return agreement;
+}
+
+export async function toggleConditionalEnrollment(studentId: string, status: boolean) {
+  try {
+    await prisma.student.update({
+      where: { id: studentId },
+      data: { isConditional: status }
+    });
+    revalidatePath("/dashboard/observador");
+    revalidatePath(`/dashboard/observador/${studentId}`);
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: "Error al actualizar matrícula condicional." };
+  }
 }

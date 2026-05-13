@@ -358,39 +358,72 @@ model UnblockRequest {
 
 // --- Módulo: Observador del Estudiante ---
 
+model SchoolInfo {
+  id                  String   @id @default(cuid())
+  name                String
+  nit                 String   @unique
+  address             String
+  phone               String
+  email               String
+  website             String?
+  principalName       String
+  logoUrl             String?
+  alertThreshold      Float    @default(3.0)
+  attendanceLimitDays Int      @default(1)
+  conditionalThreshold Int     @default(3) // Umbral para matrícula condicional
+  sessionTimeout      Int      @default(60) // En minutos
+  keepSessionOpen     Boolean  @default(false)
+}
+
+model OfficialDocument {
+  id          String   @id @default(cuid())
+  studentId   String
+  name        String   // "RC", "TI", "Certificado Médico"
+  type        String   // "IMAGE", "PDF"
+  url         String   // Path en /public/uploads/
+  uploadedAt  DateTime @default(now())
+  
+  student     Student  @relation(fields: [studentId], references: [id])
+}
+
+model DocumentChange {
+  id          String   @id @default(cuid())
+  studentId   String
+  oldValue    String
+  newValue    String
+  field       String   // "documentId"
+  reason      String
+  date        DateTime @default(now())
+  
+  student     Student  @relation(fields: [studentId], references: [id])
+}
+
 model Observation {
   id          String      @id @default(cuid())
   studentId   String
   teacherId   String
   date        DateTime    @default(now())
-  type        String      // CONDUCTUAL, ACADEMICA
-  severity    String      // LEVE, MODERADA, GRAVE
+  type        ObservationType // CONDUCTUAL, ACADEMICA, OTRA
+  severity    Severity    // LEVE, MODERADA, GRAVE
   description String      @db.Text
   
   student     Student     @relation(fields: [studentId], references: [id])
   teacher     Teacher     @relation(fields: [teacherId], references: [id])
   followUps   FollowUp[]
+  agreements  Agreement[]
+  meetings    ParentMeeting[]
 }
 
-model FollowUp {
-  id            String      @id @default(cuid())
-  observationId String
-  date          DateTime    @default(now())
-  description   String      @db.Text
-  
-  observation   Observation @relation(fields: [observationId], references: [id], onDelete: Cascade)
+enum ObservationType {
+  CONDUCTUAL
+  ACADEMICA
+  OTRA
 }
 
-model ParentMeeting {
-  id          String   @id @default(cuid())
-  studentId   String
-  teacherId   String
-  date        DateTime
-  reason      String
-  notes       String?  @db.Text
-  
-  student     Student  @relation(fields: [studentId], references: [id])
-  teacher     Teacher  @relation(fields: [teacherId], references: [id])
+enum Severity {
+  LEVE
+  MODERADA
+  GRAVE
 }
 
 enum Role {

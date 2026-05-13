@@ -17,6 +17,8 @@ import Link from "next/link";
 import { ObservationForm } from "./ObservationForm";
 import { FollowUpForm } from "./FollowUpForm";
 import { MeetingForm } from "./MeetingForm";
+import { ConditionalToggle } from "./ConditionalToggle";
+import { DocumentRepository } from "../../matriculas/DocumentRepository";
 
 export default async function StudentObserverPage({ params }: { params: Promise<{ studentId: string }> }) {
   const { studentId } = await params;
@@ -27,128 +29,137 @@ export default async function StudentObserverPage({ params }: { params: Promise<
   if (!teacher) redirect("/login");
 
   return (
-    <div className="container" style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
+    <div className="container" style={{ padding: '2rem', maxWidth: '1400px', margin: '0 auto' }}>
       <Link href="/dashboard/observador" style={{ 
         display: 'flex', 
         alignItems: 'center', 
         gap: '0.5rem', 
-        color: 'var(--color-text-muted)',
+        color: 'var(--text-muted)',
         textDecoration: 'none',
         marginBottom: '1.5rem',
         fontSize: '0.9rem'
       }}>
         <ChevronLeft size={16} />
-        Volver al listado
+        Volver al listado del observador
       </Link>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
           <div style={{ 
             width: '80px', 
             height: '80px', 
-            borderRadius: '50%', 
-            backgroundColor: 'var(--color-bg-alt)', 
+            borderRadius: '20px', 
+            backgroundColor: 'rgba(59, 130, 246, 0.1)', 
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center',
             color: 'var(--color-primary)',
-            border: '3px solid var(--color-border)'
+            border: '2px solid rgba(59, 130, 246, 0.2)'
           }}>
             <User size={40} />
           </div>
           <div>
-            <h1 style={{ fontSize: '2rem', fontWeight: 'bold', margin: 0 }}>
+            <h1 style={{ fontSize: '2.2rem', fontWeight: '800', margin: 0, letterSpacing: '-0.025em' }}>
               {student.firstName} {student.lastName}
             </h1>
-            <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>
-              Grado: {(student as any).course?.name || 'N/A'} | Expediente: {student.id.slice(-8).toUpperCase()}
+            <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>
+              Grado: {(student as any).course?.name || 'N/A'} | Documento: {student.documentId}
             </p>
           </div>
         </div>
 
-        {student.isConditional && (
-          <div style={{ 
-            backgroundColor: '#fef2f2', 
-            color: '#991b1b', 
-            padding: '0.75rem 1.25rem', 
-            borderRadius: '0.75rem', 
-            border: '1px solid #fecaca',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            fontWeight: 'bold'
-          }}>
-            <ShieldAlert size={24} />
-            <div>
-              <div style={{ fontSize: '0.9rem' }}>Estado: MATRÍCULA CONDICIONAL</div>
-              <div style={{ fontSize: '0.75rem', opacity: 0.8, fontWeight: 'normal' }}>Requiere seguimiento prioritario</div>
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          {student.isConditional && (
+            <div style={{ 
+              backgroundColor: 'rgba(239, 68, 68, 0.1)', 
+              color: 'var(--color-danger)', 
+              padding: '0.75rem 1.25rem', 
+              borderRadius: '1rem', 
+              border: '1px solid var(--color-danger)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              fontWeight: 'bold'
+            }}>
+              <ShieldAlert size={24} />
+              <div>
+                <div style={{ fontSize: '0.9rem' }}>MATRÍCULA CONDICIONAL</div>
+                <div style={{ fontSize: '0.7rem', opacity: 0.8, fontWeight: 'normal' }}>Seguimiento Prioritario Activo</div>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+          <Link 
+            href={`/dashboard/observador/${student.id}/report`} 
+            className="btn-secondary"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.25rem' }}
+          >
+            <FileText size={20} />
+            Expediente PDF
+          </Link>
+        </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '2rem' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '2.5rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
           {/* Timeline of Observations */}
           <section>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Clock size={24} />
-                Historial de Observaciones
-              </h2>
-            </div>
+            <h2 style={{ fontSize: '1.4rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+              <Clock size={24} color="var(--color-primary)" />
+              Historial de Novedades y Observaciones
+            </h2>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               {(student as any).observations.map((obs: any) => (
-                <div key={obs.id} className="card-premium" style={{ padding: '1.5rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                <div key={obs.id} className="card-premium" style={{ padding: '1.5rem', borderLeft: (obs as any).severity === 'GRAVE' ? '4px solid var(--color-danger)' : '1px solid var(--border-light)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <span style={{ 
-                        padding: '0.25rem 0.75rem', 
-                        borderRadius: '1rem', 
-                        fontSize: '0.75rem', 
+                        padding: '0.3rem 0.8rem', 
+                        borderRadius: '0.5rem', 
+                        fontSize: '0.7rem', 
                         fontWeight: 'bold',
-                        backgroundColor: (obs as any).severity === 'GRAVE' ? '#fee2e2' : (obs as any).severity === 'MODERADA' ? '#fef3c7' : '#ecfdf5',
-                        color: (obs as any).severity === 'GRAVE' ? '#991b1b' : (obs as any).severity === 'MODERADA' ? '#92400e' : '#065f46'
+                        textTransform: 'uppercase',
+                        backgroundColor: (obs as any).severity === 'GRAVE' ? 'rgba(239, 68, 68, 0.1)' : (obs as any).severity === 'MODERADA' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                        color: (obs as any).severity === 'GRAVE' ? 'var(--color-danger)' : (obs as any).severity === 'MODERADA' ? 'var(--color-warning)' : 'var(--color-success)'
                       }}>
                         {(obs as any).severity}
                       </span>
-                      <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: '500' }}>
                         {(obs as any).type}
                       </span>
                     </div>
-                    <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                       <Calendar size={14} />
                       {new Date((obs as any).date).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })}
                     </span>
                   </div>
 
-                  <p style={{ marginBottom: '1.5rem', lineHeight: '1.6' }}>{(obs as any).description}</p>
+                  <p style={{ marginBottom: '1.5rem', lineHeight: '1.7', color: 'var(--text-main)', fontSize: '0.95rem' }}>{(obs as any).description}</p>
                   
-                  <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>
-                    Registrado por: <strong>Prof. {obs.teacher.firstName} {obs.teacher.lastName}</strong>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1.5rem', backgroundColor: 'var(--bg-app)', padding: '0.5rem 0.75rem', borderRadius: '0.5rem', display: 'inline-block' }}>
+                    Registrado por: <strong style={{ color: 'var(--text-main)' }}>Prof. {obs.teacher.firstName} {obs.teacher.lastName}</strong>
                   </div>
 
                   {/* Follow ups */}
-                  <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '1rem' }}>
-                    <h4 style={{ fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '1.25rem' }}>
+                    <h4 style={{ fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-muted)' }}>
                       <MessageSquare size={16} />
-                      Seguimientos ({obs.followUps.length})
+                      SEGUIMIENTOS Y EVOLUCIÓN ({(obs as any).followUps?.length || 0})
                     </h4>
                     
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1rem' }}>
-                      {obs.followUps.map((fu: any) => (
+                      {(obs as any).followUps?.map((fu: any) => (
                         <div key={fu.id} style={{ 
-                          backgroundColor: 'var(--color-bg-alt)', 
+                          backgroundColor: 'var(--bg-app)', 
                           padding: '0.75rem', 
                           borderRadius: '0.5rem',
                           fontSize: '0.85rem',
                           borderLeft: '3px solid var(--color-primary)'
                         }}>
-                          <div style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>
+                          <div style={{ fontWeight: 'bold', marginBottom: '0.25rem', fontSize: '0.75rem' }}>
                             {new Date(fu.date).toLocaleDateString()}
                           </div>
-                          <div>{fu.description}</div>
+                          <div style={{ color: 'var(--text-main)' }}>{fu.description}</div>
                         </div>
                       ))}
                     </div>
@@ -161,13 +172,14 @@ export default async function StudentObserverPage({ params }: { params: Promise<
               {(student as any).observations.length === 0 && (
                 <div style={{ 
                   textAlign: 'center', 
-                  padding: '3rem', 
-                  backgroundColor: 'var(--color-bg-alt)', 
+                  padding: '4rem 2rem', 
+                  backgroundColor: 'var(--bg-app)', 
                   borderRadius: '1rem',
-                  color: 'var(--color-text-muted)'
+                  color: 'var(--text-muted)',
+                  border: '2px dashed var(--border-light)'
                 }}>
-                  <Clock size={32} style={{ marginBottom: '1rem', opacity: 0.5 }} />
-                  <p>No hay observaciones registradas para este estudiante.</p>
+                  <Clock size={40} style={{ marginBottom: '1rem', opacity: 0.3 }} />
+                  <p>No se han registrado incidentes ni observaciones preventivas.</p>
                 </div>
               )}
             </div>
@@ -175,68 +187,69 @@ export default async function StudentObserverPage({ params }: { params: Promise<
         </div>
 
         {/* Sidebar Actions */}
-        <aside style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <aside style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           <div className="card-premium" style={{ padding: '1.5rem' }}>
-            <h3 style={{ fontWeight: 'bold', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <PlusCircle size={20} />
-              Acciones Rápidas
+            <h3 style={{ fontWeight: 'bold', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem' }}>
+              <PlusCircle size={20} color="var(--color-primary)" />
+              Gestión Disciplinaria
             </h3>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <ObservationForm studentId={student.id} teacherId={teacher.id} />
               <MeetingForm studentId={student.id} teacherId={teacher.id} />
+              <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '1rem', marginTop: '0.5rem' }}>
+                <ConditionalToggle studentId={student.id} initialStatus={student.isConditional} />
+              </div>
             </div>
           </div>
 
           <div className="card-premium" style={{ padding: '1.5rem' }}>
-            <h3 style={{ fontWeight: 'bold', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Users size={20} />
-              Reuniones Programadas
+            <h3 style={{ fontWeight: 'bold', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem' }}>
+              <Users size={20} color="var(--color-primary)" />
+              Citaciones y Comités
             </h3>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {(student as any).parentMeetings.map((meeting: any) => (
-                <div key={meeting.id} style={{ fontSize: '0.85rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                    <strong>{new Date(meeting.date).toLocaleDateString()}</strong>
+                <div key={meeting.id} style={{ fontSize: '0.85rem', padding: '0.75rem', borderRadius: '0.5rem', backgroundColor: 'var(--bg-app)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                    <strong style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <Calendar size={14} />
+                      {new Date(meeting.date).toLocaleDateString()}
+                    </strong>
                     <span style={{ 
-                      fontSize: '0.7rem', 
-                      padding: '0.1rem 0.5rem', 
-                      borderRadius: '1rem',
-                      backgroundColor: (meeting as any).status === 'COMPLETED' ? '#ecfdf5' : (meeting as any).status === 'CANCELLED' ? '#fee2e2' : '#eff6ff',
-                      color: (meeting as any).status === 'COMPLETED' ? '#065f46' : (meeting as any).status === 'CANCELLED' ? '#991b1b' : '#1e40af'
+                      fontSize: '0.65rem', 
+                      padding: '0.15rem 0.5rem', 
+                      borderRadius: '0.4rem',
+                      fontWeight: 'bold',
+                      backgroundColor: (meeting as any).status === 'COMPLETED' ? 'rgba(16, 185, 129, 0.1)' : (meeting as any).status === 'CANCELLED' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(59, 130, 246, 0.1)',
+                      color: (meeting as any).status === 'COMPLETED' ? 'var(--color-success)' : (meeting as any).status === 'CANCELLED' ? 'var(--color-danger)' : 'var(--color-primary)'
                     }}>
                       {(meeting as any).status}
                     </span>
                   </div>
-                  {meeting.notes && <p style={{ color: 'var(--color-text-muted)', margin: 0 }}>{meeting.notes}</p>}
+                  {meeting.notes && <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.8rem', fontStyle: 'italic' }}>"{meeting.notes}"</p>}
                 </div>
               ))}
 
               {(student as any).parentMeetings.length === 0 && (
-                <p style={{ color: 'var(--color-text-muted)', textAlign: 'center', margin: 0 }}>
-                  No hay reuniones programadas.
+                <p style={{ color: 'var(--text-muted)', textAlign: 'center', margin: 0, fontSize: '0.85rem' }}>
+                  Sin reuniones programadas.
                 </p>
               )}
             </div>
           </div>
 
-          <Link 
-            href={`/dashboard/observador/${student.id}/report`} 
-            className="btn-secondary"
-            style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              gap: '0.5rem',
-              padding: '1rem',
-              fontWeight: 'bold',
-              textAlign: 'center'
-            }}
-          >
-            <FileText size={20} />
-            Generar Expediente PDF
-          </Link>
+          <div className="card-premium" style={{ padding: '1.5rem' }}>
+            <h3 style={{ fontWeight: 'bold', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem' }}>
+              <FileText size={20} color="var(--color-primary)" />
+              Expediente Digital
+            </h3>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+              Soportes físicos, memorandos y compromisos firmados.
+            </p>
+            <DocumentRepository studentId={student.id} />
+          </div>
         </aside>
       </div>
     </div>

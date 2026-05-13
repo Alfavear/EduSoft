@@ -106,6 +106,9 @@ NEXTAUTH_URL="http://localhost:3000"
 - **Registro y Matrículas:** `/Frontend/src/app/dashboard/matriculas/actions.ts`
 - **Repositorio de Documentos:** `/Frontend/src/app/dashboard/matriculas/DocumentRepository.tsx`
 - **Acciones Académicas:** `/Frontend/src/app/dashboard/academico/actions.ts`
+- **Observador Estudiante:** `/Frontend/src/app/dashboard/observador/ObserverList.tsx`
+- **Control Condicional:** `/Frontend/src/app/dashboard/observador/[studentId]/ConditionalToggle.tsx`
+- **Acciones Observador:** `/Frontend/src/app/dashboard/observador/observadorActions.ts`
 
 ---
 
@@ -117,5 +120,4 @@ NEXTAUTH_URL="http://localhost:3000"
 5. **Server Actions:** Lógica en archivos `actions.ts` con `"use server"`.
 
 ---
-*HANDOVER consolidado: 12 de Mayo de 2026 (Noche).*
-
+*HANDOVER consolidado: 12 de Mayo de 2026 (Final).*

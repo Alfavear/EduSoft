@@ -11,6 +11,7 @@ export function ObservationForm({ studentId, teacherId }: { studentId: string, t
   const [type, setType] = useState<ObservationType>("CONDUCTUAL");
   const [severity, setSeverity] = useState<Severity>("LEVE");
   const [description, setDescription] = useState("");
+  const [file, setFile] = useState<File | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,15 +19,22 @@ export function ObservationForm({ studentId, teacherId }: { studentId: string, t
 
     setLoading(true);
     try {
-      await createObservation({
-        studentId,
-        teacherId,
-        type,
-        severity,
-        description
-      });
-      setDescription("");
-      setIsOpen(false);
+      const formData = new FormData();
+      formData.append("studentId", studentId);
+      formData.append("teacherId", teacherId);
+      formData.append("type", type);
+      formData.append("severity", severity);
+      formData.append("description", description);
+      if (file) formData.append("file", file);
+
+      const res = await createObservation(formData);
+      if (res.success) {
+        setDescription("");
+        setFile(null);
+        setIsOpen(false);
+      } else {
+        alert(res.error);
+      }
     } catch (error) {
       console.error(error);
       alert("Error al crear la observación");
@@ -102,6 +110,16 @@ export function ObservationForm({ studentId, teacherId }: { studentId: string, t
               resize: 'none',
               fontFamily: 'inherit'
             }}
+          />
+        </div>
+
+        <div>
+          <label style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', display: 'block', marginBottom: '0.25rem' }}>Adjuntar Soporte (PDF/JPG)</label>
+          <input 
+            type="file" 
+            accept=".pdf,.jpg,.jpeg,.png"
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
+            style={{ width: '100%', fontSize: '0.8rem' }}
           />
         </div>
 

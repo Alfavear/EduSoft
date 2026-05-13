@@ -279,9 +279,11 @@ model SchoolInfo {
   updatedAt           DateTime @updatedAt
   alertThreshold      Float    @default(3.0)
   attendanceLimitDays Int      @default(1)
+  conditionalThreshold Int     @default(3) // Número de faltas para matrícula condicional
   sessionTimeout      Int      @default(60) // In minutes
   keepSessionOpen     Boolean  @default(false)
 }
+
 
 model Attendance {
   id        String           @id @default(cuid())

@@ -141,6 +141,12 @@ El sistema maneja 3 roles principales:
    - Nuevos modelos: `OfficialDocument` (Archivos físicos) y `DocumentChange` (Historial de identidad).
    - Campos de caracterización MEN añadidos a `Student` y `Teacher`.
 
+5. **Reingeniería del Observador del Estudiante**:
+   - Rediseño visual con filtros avanzados por curso y nombre.
+   - Implementación de **Soportes Digitales**: Carga de evidencias (PDF/JPG) vinculadas a observaciones.
+   - **Matrícula Condicional**: Automatización basada en umbral de faltas configurable y gestión manual proactiva.
+   - Panel de citaciones y compromisos con historial de cumplimiento.
+
 ### 🚀 PRÓXIMOS PASOS: FASE 3 - Tesorería y Facturación Masiva
 **Objetivo:** Automatizar el recaudo institucional.
 1. **Facturación por Lotes:** Generar pensiones para todos los estudiantes de un curso con un solo clic.
@@ -148,5 +154,5 @@ El sistema maneja 3 roles principales:
 3. **App de Padres:** Consulta de boletines y pagos desde dispositivos móviles.
 
 ---
-*Bitácora consolidada: 12 de Mayo de 2026 (Noche).*
+*Bitácora consolidada: 12 de Mayo de 2026 (Sesión Final).*
 
