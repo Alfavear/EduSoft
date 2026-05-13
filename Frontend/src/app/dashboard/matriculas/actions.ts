@@ -241,7 +241,6 @@ export async function registerStudent(formData: FormData) {
     const username = `${data.firstName.trim().toLowerCase()}.${data.lastName.trim().toLowerCase()}`.replace(/\s+/g, '');
     const user = await prisma.user.create({
       data: {
-        name: `${data.firstName} ${data.lastName}`,
         username,
         password: data.documentId,
         role: "STUDENT"

@@ -40,7 +40,7 @@ export function UserForm({ courses }: { courses: any[] }) {
       setFormData({
         username: "",
         password: "",
-        role: "STUDENT",
+        role: "TEACHER",
         firstName: "",
         lastName: "",
         documentId: "",

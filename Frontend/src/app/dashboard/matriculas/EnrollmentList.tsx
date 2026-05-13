@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Search, Filter, Edit, CheckCircle2, XCircle, AlertCircle, UserCheck, FileCheck, UserPlus } from "lucide-react";
-import { getEnrollments, updateStudentOfficialData, uploadPrematricula, changeStudentDocument } from "./actions";
+import { getEnrollments, updateStudentOfficialData, uploadPrematricula, changeStudentDocument, uploadOfficialDocument } from "./actions";
 import { SIMATForm } from "./SIMATForm";
 import { StudentRegistrationForm } from "./StudentRegistrationForm";
 
