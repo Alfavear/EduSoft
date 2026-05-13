@@ -103,15 +103,50 @@ El sistema maneja 3 roles principales:
 | Boletines e Informes | ✅ Completado |
 | Calendario y Horarios | ✅ Completado |
 | Observador del Estudiante | ✅ Completado |
+| Tesorería (Conceptos y Facturación) | ✅ En Pausa |
+| Matrículas y Promoción (Decreto 1290) | ✅ Completado |
+| Boletines y Escalafón (Puestos) | ✅ Completado |
 
 ---
 
-## 🚀 FASE 2: Módulo de Tesorería (Próximos Pasos)
-**Objetivo:** Gestión financiera de la institución.
-1. **Configuración:** Conceptos de cobro (Pensión, Matrícula).
-2. **Facturación:** Generación automática de deudas mensuales.
-3. **Recaudo:** Registro de pagos y estados de cuenta por estudiante.
-4. **Reportes:** Informe de recaudo mensual/anual para directivos.
+## [12 de Mayo de 2026] - Fase 4: Boletines y Escalafón
+
+### Módulos Implementados
+- **Diseño de Boletín:** Plantilla profesional fiel al formato físico del colegio (I.H, Juicios Valorativos, Encabezado).
+- **Motor de Escalafón:** Lógica para calcular el **puesto (ranking)** de cada estudiante por curso y periodo.
+- **Gestión de Indicadores:** Interfaz para configurar juicios valorativos por asignatura, periodo y nivel de desempeño.
+- **Integración Normativa:** Escala de valoración nacional (Superior, Alto, Básico, Bajo) integrada en los reportes impresos.
 
 ---
-*Bitácora consolidada: 12 de Mayo de 2026.*
+
+## 📅 ITERACIÓN: 12 DE MAYO DE 2026 (SESIÓN NOCHE) - CUMPLIMIENTO NORMATIVO Y REPOSITORIO DIGITAL
+
+### ✅ LOGROS ALCANZADOS:
+1. **Centro de Reportes Oficiales (SIMAT / DANE)**:
+   - Implementación del módulo de exportación de **Anexo 6A** con todas las variables de caracterización 2024.
+   - Creación del sistema de **Auditoría de Datos** que identifica campos faltantes (SISBÉN, Estrato, etc.) antes de exportar.
+   - Preparación para reporte **DANE C-600** (Censo Anual).
+
+2. **Registro Integral de Estudiantes (Ficha SIMAT)**:
+   - Desvinculación de la creación de estudiantes del flujo de usuarios generales.
+   - Nuevo formulario de registro en Matrículas que captura toda la metadata oficial desde el primer momento.
+   - Automatización de creación de usuario/contraseña tras el registro académico.
+
+3. **Repositorio de Documentos Físicos**:
+   - Implementación de almacenamiento de archivos reales (PDF/Imágenes) en el servidor.
+   - Panel de gestión de documentos obligatorios (RC, TI, Certificados Médicos) en la ficha del estudiante.
+   - Trazabilidad normativa de **Cambio de Documento** (Novedad SIMAT) con historial de motivos.
+
+4. **Robustez de Base de Datos**:
+   - Nuevos modelos: `OfficialDocument` (Archivos físicos) y `DocumentChange` (Historial de identidad).
+   - Campos de caracterización MEN añadidos a `Student` y `Teacher`.
+
+### 🚀 PRÓXIMOS PASOS: FASE 3 - Tesorería y Facturación Masiva
+**Objetivo:** Automatizar el recaudo institucional.
+1. **Facturación por Lotes:** Generar pensiones para todos los estudiantes de un curso con un solo clic.
+2. **Dashboard de Tesorería:** Widgets de cartera morosa y proyección de ingresos mensuales.
+3. **App de Padres:** Consulta de boletines y pagos desde dispositivos móviles.
+
+---
+*Bitácora consolidada: 12 de Mayo de 2026 (Noche).*
+

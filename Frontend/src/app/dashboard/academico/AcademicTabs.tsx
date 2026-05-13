@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { createCourse, createSubject, createGradingConfig } from "./actions";
-import { BookOpen, School, Settings, Plus, Save, Trash2, CheckCircle } from "lucide-react";
+import { createCourse, createSubject, createGradingConfig, createAssignment, deleteAssignment } from "./actions";
+import { BookOpen, School, Settings, Plus, Save, Trash2, CheckCircle, UserCheck } from "lucide-react";
 
 export function AcademicTabs({ initialData }: { initialData: any }) {
   const [activeTab, setActiveTab] = useState("cursos");
-  const { courses, subjects, gradingConfigs, teachers } = initialData;
+  const { courses, subjects, gradingConfigs, teachers, assignments } = initialData;
 
   return (
     <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
@@ -47,13 +47,28 @@ export function AcademicTabs({ initialData }: { initialData: any }) {
             <Settings size={18} /> Esquemas de Notas
           </div>
         </button>
+        <button 
+          onClick={() => setActiveTab("asignaciones")}
+          style={{ 
+            flex: 1, padding: '1rem', border: 'none', background: 'none', cursor: 'pointer',
+            fontWeight: '600', borderBottom: activeTab === 'asignaciones' ? '3px solid var(--color-danger)' : 'none',
+            color: activeTab === 'asignaciones' ? 'var(--color-danger)' : 'var(--text-muted)'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+            <UserCheck size={18} /> Asignaciones Docentes
+          </div>
+        </button>
       </div>
+
 
       <div style={{ padding: '2rem' }}>
         {activeTab === "cursos" && <CoursesTab courses={courses} teachers={teachers} />}
         {activeTab === "materias" && <SubjectsTab subjects={subjects} gradingConfigs={gradingConfigs} />}
         {activeTab === "esquemas" && <GradingTab gradingConfigs={gradingConfigs} />}
+        {activeTab === "asignaciones" && <AssignmentsTab assignments={assignments} teachers={teachers} subjects={subjects} courses={courses} />}
       </div>
+
     </div>
   );
 }
@@ -231,3 +246,79 @@ function GradingTab({ gradingConfigs }: { gradingConfigs: any[] }) {
     </div>
   );
 }
+
+function AssignmentsTab({ assignments, teachers, subjects, courses }: any) {
+  const [formData, setFormData] = useState({ teacherId: "", subjectId: "", courseId: "" });
+
+  const handleAdd = async () => {
+    if (!formData.teacherId || !formData.subjectId || !formData.courseId) return;
+    await createAssignment(formData);
+    setFormData({ teacherId: "", subjectId: "", courseId: "" });
+  };
+
+  const handleDelete = async (id: string) => {
+    if (confirm("¿Eliminar esta asignación?")) {
+      await deleteAssignment(id);
+    }
+  };
+
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '2rem' }}>
+      <div>
+        <h3 style={{ marginBottom: '1rem', fontWeight: 'bold' }}>Asignaciones Actuales</h3>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead style={{ borderBottom: '2px solid var(--border-light)', textAlign: 'left' }}>
+            <tr>
+              <th style={{ padding: '0.75rem' }}>Profesor</th>
+              <th style={{ padding: '0.75rem' }}>Curso</th>
+              <th style={{ padding: '0.75rem' }}>Materia</th>
+              <th style={{ padding: '0.75rem' }}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {assignments?.map((a: any) => (
+              <tr key={a.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
+                <td style={{ padding: '0.75rem' }}>{a.teacher.user.name}</td>
+                <td style={{ padding: '0.75rem' }}>{a.course.name}</td>
+                <td style={{ padding: '0.75rem' }}>{a.subject.name}</td>
+                <td style={{ padding: '0.75rem', textAlign: 'right' }}>
+                  <button onClick={() => handleDelete(a.id)} style={{ color: 'var(--color-danger)', background: 'none', border: 'none', cursor: 'pointer' }}>
+                    <Trash2 size={16} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div style={{ backgroundColor: 'var(--bg-app)', padding: '1.5rem', borderRadius: 'var(--radius)' }}>
+        <h4 style={{ marginBottom: '1rem', fontWeight: 'bold' }}>Nueva Asignación</h4>
+        <select 
+          value={formData.teacherId} onChange={e => setFormData({...formData, teacherId: e.target.value})}
+          style={{ width: '100%', padding: '0.625rem', borderRadius: 'var(--radius)', border: '1px solid var(--border-light)', marginBottom: '0.5rem' }}
+        >
+          <option value="">Seleccionar Profesor...</option>
+          {teachers.map((t: any) => <option key={t.id} value={t.id}>{t.user.name}</option>)}
+        </select>
+        <select 
+          value={formData.courseId} onChange={e => setFormData({...formData, courseId: e.target.value})}
+          style={{ width: '100%', padding: '0.625rem', borderRadius: 'var(--radius)', border: '1px solid var(--border-light)', marginBottom: '0.5rem' }}
+        >
+          <option value="">Seleccionar Curso...</option>
+          {courses.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
+        </select>
+        <select 
+          value={formData.subjectId} onChange={e => setFormData({...formData, subjectId: e.target.value})}
+          style={{ width: '100%', padding: '0.625rem', borderRadius: 'var(--radius)', border: '1px solid var(--border-light)', marginBottom: '1.5rem' }}
+        >
+          <option value="">Seleccionar Materia...</option>
+          {subjects.map((s: any) => <option key={s.id} value={s.id}>{s.name}</option>)}
+        </select>
+        <button className="btn-primary" style={{ width: '100%', backgroundColor: 'var(--color-danger)' }} onClick={handleAdd}>
+          <UserCheck size={18}/> Asignar Docente
+        </button>
+      </div>
+    </div>
+  );
+}
+

@@ -1,111 +1,131 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { getPerformanceLevel, isPassed, calculateAverage } from "@/lib/gradingUtils";
 
-export async function getExcellenceReport() {
-  const students = await prisma.student.findMany({
-    include: {
-      grades: true,
-      course: true
-    },
-    orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }]
-  });
-
-  return students.map(s => {
-    const avg = s.grades.length > 0 
-      ? s.grades.reduce((acc, g) => acc + parseFloat(g.value), 0) / s.grades.length 
-      : 0;
-    return {
-      id: s.id,
-      name: `${s.firstName} ${s.lastName}`,
-      course: s.course.name,
-      average: avg
-    };
-  }).filter(s => s.average >= 4.5).sort((a, b) => b.average - a.average);
+export async function getInstitutionalInfo() {
+  return await prisma.schoolInfo.findFirst();
 }
 
-export async function getAttendanceWarningReport() {
+
+/**
+ * Calcula el escalafón (puestos) de un curso para un periodo específico.
+ * El puesto se basa en el promedio general de todas las asignaturas.
+ */
+export async function calculateCourseRankings(courseId: string, periodId: string) {
   const students = await prisma.student.findMany({
+    where: { courseId },
     include: {
-      attendances: true,
-      course: true
-    },
-    orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }]
+      grades: {
+        where: { periodId }
+      }
+    }
   });
 
-  return students.map(s => {
-    const totalDays = s.attendances.length;
-    const absences = s.attendances.filter(a => a.status === 'ABSENT').length;
-    const rate = totalDays > 0 ? (absences / totalDays) * 100 : 0;
+  const studentAverages = students.map(student => {
+    const grades = student.grades.map(g => parseFloat(g.value) || 0);
+    const average = grades.length > 0 ? grades.reduce((a, b) => a + b, 0) / grades.length : 0;
+    return {
+      studentId: student.id,
+      fullName: `${student.firstName} ${student.lastName}`,
+      average
+    };
+  });
+
+  // Ordenar por promedio de mayor a menor
+  const sorted = studentAverages.sort((a, b) => b.average - a.average);
+
+  // Asignar puestos (considerando empates si se desea, aquí simple)
+  return sorted.map((item, index) => ({
+    ...item,
+    rank: index + 1
+  }));
+}
+
+/**
+ * Obtiene los datos completos para el boletín de un estudiante.
+ */
+export async function getStudentReportData(studentId: string, periodId: string) {
+  const student = await prisma.student.findUnique({
+    where: { id: studentId },
+    include: {
+      course: {
+        include: {
+          assignments: {
+            include: {
+              subject: {
+                include: {
+                  indicators: {
+                    where: { periodId }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      grades: {
+        where: { periodId },
+        include: {
+          assignment: {
+            include: { subject: true }
+          }
+        }
+      }
+    }
+  });
+
+  if (!student) return null;
+
+  // Organizar datos por área (Subject)
+  const subjectsData = student.course.assignments.map(as => {
+    const grade = student.grades.find(g => g.assignmentId === as.id);
+    const numericValue = grade ? parseFloat(grade.value) || 0 : 0;
     
-    return {
-      id: s.id,
-      name: `${s.firstName} ${s.lastName}`,
-      course: s.course.name,
-      absenceCount: absences,
-      absenceRate: rate
-    };
-  }).filter(s => s.absenceRate >= 15).sort((a, b) => b.absenceRate - a.absenceRate);
-}
+    // Determinar nivel de desempeño
+    let level = "Bajo";
+    if (numericValue >= 4.6) level = "Superior";
+    else if (numericValue >= 4.0) level = "Alto";
+    else if (numericValue >= 3.0) level = "Básico";
 
-export async function getConsolidatedCourseReport(courseId: string) {
-  const [course, students, subjects] = await Promise.all([
-    prisma.course.findUnique({ where: { id: courseId } }),
-    prisma.student.findMany({ 
-      where: { courseId },
-      include: { grades: { include: { assignment: { include: { subject: true } } } } },
-      orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }]
-    }),
-    prisma.subject.findMany({
-      where: { assignments: { some: { courseId } } }
-    })
-  ]);
-
-  const reportData = students.map(s => {
-    const subjectGrades: Record<string, string> = {};
-    subjects.forEach(sub => {
-      const grade = s.grades.find(g => g.assignment.subjectId === sub.id);
-      subjectGrades[sub.id] = grade ? grade.value : "-";
-    });
-
-    const numericGrades = s.grades.map(g => parseFloat(g.value)).filter(v => !isNaN(v));
-    const average = numericGrades.length > 0 
-      ? numericGrades.reduce((acc, v) => acc + v, 0) / numericGrades.length 
-      : 0;
+    // Buscar indicador para ese nivel
+    const indicator = as.subject.indicators.find(ind => ind.performanceLevel === level);
 
     return {
-      id: s.id,
-      name: `${s.firstName} ${s.lastName}`,
-      grades: subjectGrades,
-      average: average.toFixed(2)
+      name: as.subject.name,
+      intensity: as.subject.weeklyHours || 0,
+      grade: numericValue,
+      performanceLevel: level,
+      description: indicator?.description || ""
     };
   });
+
+  // Calcular puesto
+  const rankings = await calculateCourseRankings(student.courseId, periodId);
+  const myRank = rankings.find(r => r.studentId === studentId)?.rank || 0;
 
   return {
-    courseName: course?.name,
-    subjects,
-    data: reportData
+    student,
+    subjects: subjectsData,
+    rank: myRank,
+    totalStudents: rankings.length,
+    overallAverage: subjectsData.reduce((acc, s) => acc + s.grade, 0) / subjectsData.length
   };
 }
 
-export async function getStudentsForReports() {
-  return await prisma.student.findMany({
-    include: { course: true },
-    orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }]
-  });
-}
-
-export async function getActivePeriodsForReports() {
-  const year = await prisma.academicYear.findFirst({
-    where: { isActive: true },
-    include: { periods: { orderBy: { createdAt: 'asc' } } }
-  });
-  return year?.periods || [];
-}
-
-export async function getAssignmentsForReports() {
-  return await prisma.teacherAssignment.findMany({
-    include: { teacher: true, course: true, subject: true },
-    orderBy: { courseId: 'asc' }
+/**
+ * Gestión de Indicadores
+ */
+export async function upsertIndicator(data: { subjectId: string; periodId: string; performanceLevel: string; description: string }) {
+  return await prisma.indicator.upsert({
+    where: {
+      subjectId_periodId_performanceLevel: {
+        subjectId: data.subjectId,
+        periodId: data.periodId,
+        performanceLevel: data.performanceLevel
+      }
+    },
+    update: { description: data.description },
+    create: data
   });
 }

@@ -91,6 +91,12 @@ export async function getDashboardData() {
     }
   });
 
+  // 5. Tesorería
+  const [pendingInvoices, totalRevenue] = await Promise.all([
+    prisma.invoice.count({ where: { status: 'PENDING' } }),
+    prisma.payment.aggregate({ _sum: { amount: true } }).then(res => res._sum.amount || 0)
+  ]);
+
   return {
     studentCount: stats[0],
     teacherCount: stats[1],
@@ -100,9 +106,12 @@ export async function getDashboardData() {
     studentsAtRisk: studentsAtRiskMapped,
     excellenceTable,
     criticalSubject,
-    activePeriod: activeYear?.periods.find(p => p.status === 'OPEN')?.name || "Sin periodo activo"
+    activePeriod: activeYear?.periods.find(p => p.status === 'OPEN')?.name || "Sin periodo activo",
+    pendingInvoices,
+    revenue: totalRevenue
   };
 }
+
 
 export async function getTeacherDashboardData(userId: string) {
   const teacher = await prisma.teacher.findUnique({

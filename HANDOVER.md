@@ -70,33 +70,52 @@ NEXTAUTH_URL="http://localhost:3000"
 - **Gestión de Usuarios:** CRUD robusto con paginación servidor y búsqueda en tiempo real.
 - **Control de Periodos:** Cierre/Apertura con workflow de solicitud de acceso.
 
+### Módulo: Tesorería (Fase 2 - Core)
+- **Facturación Masiva:** Generación de deudas por curso o global.
+- **Registro de Pagos:** Interfaz para abonos manuales y control de estados (PENDIENTE/PAGADA).
+- **Dashboard Financiero:** Métricas de Cartera, Recaudo y Facturación en tiempo real.
+- **Actions:** `/dashboard/tesoreria/actions.ts`.
+
+### Módulo: Boletines y Escalafón (Fase 4)
+- **Generación de Boletines:** Plantilla CSS optimizada para impresión (fiel al formato físico).
+- **Escalafón (Puestos):** Cálculo automático de ranking por curso basado en el promedio general del periodo.
+- **Juicios Valorativos:** Banco de indicadores por asignatura y nivel de desempeño.
+- **Configuración Horaria:** Registro de Intensidad Horaria (I.H) por materia.
+
+### Módulo: Cumplimiento Normativo (SIMAT / DANE)
+- **Centro de Reportes Oficiales:** Generación de **Anexo 6A** (SIMAT) y preparación para **C-600** (DANE).
+- **Auditoría de Calidad:** Herramienta que valida datos obligatorios (SISBÉN, Estrato, PAE) antes de exportar archivos oficiales.
+- **Registro Integral de Matrículas:** Formulario normativo que captura metadata oficial y crea automáticamente usuarios de acceso.
+- **Repositorio de Documentos Físicos:** Almacenamiento y gestión de archivos (PDF/Imagen) para soportes de matrícula (RC, TI, EPS).
+- **Trazabilidad de Identidad:** Histórico de cambios de documento (`DocumentChange`) con auditoría de motivos legales.
+
 ---
 
-## 🚀 ROADMAP — FASE 2: Módulo de Tesorería
+## 🚀 ROADMAP — FASE 5: Consolidación Financiera y App de Padres
 
-### Objetivos Financieros
-1. **Modelado de Datos:** `FeeType` (Conceptos), `Invoice` (Deudas), `Payment` (Recaudo).
-2. **Generación Masiva:** Crear facturas para todos los estudiantes al inicio de mes.
-3. **Estado de Cuenta:** Vista detallada de pagos pendientes y realizados para padres/estudiantes.
-4. **Registro de Pagos:** Interfaz administrativa para asentar abonos manuales.
-5. **Reportes:** Balance de ingresos y morosidad.
+### Próximos Pasos
+1. **Facturación Masiva:** Generación automatizada de pensiones mensuales para toda la institución.
+2. **Dashboard de Tesorería:** Visualización proactiva de cartera morosa y proyección de ingresos.
+3. **App de Padres:** Portal móvil para consulta de boletines, tareas y estado de cuenta.
 
 ---
 
 ## 📂 Archivos Clave
 - **Esquema DB:** `/Database/prisma/schema.prisma`
-- **Estilos:** `/Frontend/src/app/globals.css`
-- **Acciones Académicas:** `/Frontend/src/app/dashboard/clases/actions.ts`
-- **Acciones Observador:** `/Frontend/src/app/dashboard/observador/observadorActions.ts`
-- **Acciones Asistencia:** `/Frontend/src/app/dashboard/asistencia/actions.ts`
+- **Reportes Oficiales:** `/Frontend/src/app/dashboard/reportes-oficiales/actions.ts`
+- **Registro y Matrículas:** `/Frontend/src/app/dashboard/matriculas/actions.ts`
+- **Repositorio de Documentos:** `/Frontend/src/app/dashboard/matriculas/DocumentRepository.tsx`
+- **Acciones Académicas:** `/Frontend/src/app/dashboard/academico/actions.ts`
 
 ---
 
 ## 🛑 Reglas Críticas
 1. **Next.js 15+:** Siempre usar `searchParams` y `params` como `Promise` en `page.tsx`.
-2. **Prisma:** Cliente generado en `Frontend/node_modules/@prisma/client`.
-3. **Estilos:** Mantener diseño "Premium" (Glassmorphism). NO usar Tailwind.
-4. **Server Actions:** Lógica en archivos `actions.ts` con `"use server"`.
+2. **Repositorio Físico:** Los archivos se almacenan en `Frontend/public/uploads`.
+3. **Prisma:** Cliente generado en `Frontend/node_modules/@prisma/client`.
+4. **Estilos:** Mantener diseño "Premium" (Glassmorphism). NO usar Tailwind.
+5. **Server Actions:** Lógica en archivos `actions.ts` con `"use server"`.
 
 ---
-*HANDOVER consolidado: 12 de Mayo de 2026.*
+*HANDOVER consolidado: 12 de Mayo de 2026 (Noche).*
+

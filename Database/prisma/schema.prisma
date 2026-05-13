@@ -29,12 +29,29 @@ model Student {
   firstName      String
   lastName       String
   documentId     String?
+  documentType   String?         // CC, TI, RC, NES, etc.
+  gender         String?         // M, F, OTRO
+  stratus        Int?            // 1-6
+  sisben         String?         // A1, B2, etc.
+  eps            String?
+  ethnicity      String?
+  disability     String?
+  isVictim       Boolean         @default(false)
   guardianName   String          @default("No registrado")
   guardianPhone  String          @default("0000000000")
   guardianEmail  String?
   address        String?
   bloodType      String?
   birthDate      DateTime?
+  
+  // --- Campos SIMAT / Anexo 6A ---
+  paeBeneficiary    Boolean      @default(false)
+  transportBeneficiary Boolean   @default(false)
+  disabilityType    String?      // CIE-10 o categorías MEN
+  isDisplaced       Boolean      @default(false)
+  ethnicGroup       String?      // Indígena, Afro, etc.
+  extracurricular   String?      // Actividades complementarias
+  
   observations   Observation[]
   parentMeetings ParentMeeting[]
   isConditional  Boolean         @default(false)
@@ -44,9 +61,89 @@ model Student {
   updatedAt      DateTime        @updatedAt
   attendances    Attendance[]
   grades         Grade[]
-  course         Course          @relation(fields: [courseId], references: [id])
-  user           User            @relation(fields: [userId], references: [id])
+  invoices       Invoice[]
+  enrollments     Enrollment[]
+  documentChanges  DocumentChange[]
+  officialDocuments OfficialDocument[]
+  course          Course          @relation(fields: [courseId], references: [id])
+  user            User            @relation(fields: [userId], references: [id])
 }
+
+model OfficialDocument {
+  id           String   @id @default(cuid())
+  studentId    String?
+  enrollmentId String?
+  name         String   // Ej: "Documento Identidad", "Seguro Médico"
+  fileUrl      String   // Ruta local o URL de almacenamiento
+  fileType     String   // "PDF", "JPG", etc.
+  createdAt    DateTime @default(now())
+  
+  student      Student?    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  enrollment   Enrollment? @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+}
+
+
+
+model DocumentChange {
+  id             String    @id @default(cuid())
+  studentId      String
+  oldDocumentId  String
+  oldDocumentType String
+  newDocumentId  String
+  newDocumentType String
+  changeDate     DateTime  @default(now())
+  reason         String?   // Ej: "Cambio de RC a TI"
+  student        Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+
+model Enrollment {
+  id              String           @id @default(cuid())
+  studentId       String
+  academicYearId  String
+  courseId        String
+  status          EnrollmentStatus @default(ENROLLED)
+  enrollmentDate  DateTime         @default(now())
+  
+  // Normativa Decreto 1290 (Colombia)
+  finalAverage    Float?
+  nationalScale   String?          // Superior, Alto, Básico, Bajo
+  promotionDate   DateTime?
+  prematriculaUrl String?          // Documento de prematrícula (Requisito antiguos)
+  notes           String?
+  
+  student       Student      @relation(fields: [studentId], references: [id])
+  academicYear  AcademicYear @relation(fields: [academicYearId], references: [id])
+  course        Course       @relation(fields: [courseId], references: [id])
+  remedials     RemedialSession[]
+  officialDocuments OfficialDocument[]
+
+  @@unique([studentId, academicYearId])
+}
+
+model RemedialSession {
+  id           String   @id @default(cuid())
+  enrollmentId String
+  subjectId    String
+  teacherId    String
+  date         DateTime
+  description  String   @db.Text // Actividades de superación
+  status       String   @default("PENDING") // PENDING, PASSED, FAILED
+  grade        String?
+
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  subject    Subject    @relation(fields: [subjectId], references: [id])
+  teacher    Teacher    @relation(fields: [teacherId], references: [id])
+}
+
+enum EnrollmentStatus {
+  ENROLLED    // Matriculado
+  PASSED      // Aprobado/Promovido
+  FAILED      // Reprobado
+  REMEDIAL    // En proceso de nivelación
+  WITHDRAWN   // Retirado
+}
+
 
 model Teacher {
   id              String              @id @default(cuid())
@@ -59,6 +156,13 @@ model Teacher {
   userId          String              @unique
   createdAt       DateTime            @default(now())
   updatedAt       DateTime            @updatedAt
+  
+  // --- Campos C-600 DANE ---
+  escalafon       String?             // Nivel de escalafón docente
+  highestDegree   String?             // Pregrado, Magister, Doctorado
+  vinculationType String?             // Planta, Contrato, etc.
+  weeklyHours     Int?                // Carga horaria total
+  
   attendances     Attendance[]
   attendanceReqs  AttendanceRequest[]
   directedCourses Course[]            @relation("CourseDirector")
@@ -66,6 +170,7 @@ model Teacher {
   assignments     TeacherAssignment[]
   observations    Observation[]
   parentMeetings  ParentMeeting[]
+  remedialSessions RemedialSession[]
 }
 
 model Course {
@@ -80,16 +185,24 @@ model Course {
   director       Teacher?            @relation("CourseDirector", fields: [directorId], references: [id])
   students       Student[]
   assignments    TeacherAssignment[]
+  enrollments    Enrollment[]
+  
+  nextCourseId   String?
+  nextCourse     Course?             @relation("CoursePromotion", fields: [nextCourseId], references: [id])
+  previousCourses Course[]            @relation("CoursePromotion")
 }
 
 model Subject {
   id              String              @id @default(cuid())
   name            String
   gradingConfigId String
+  weeklyHours     Float?              // Intensidad Horaria (I.H.)
   createdAt       DateTime            @default(now())
   updatedAt       DateTime            @updatedAt
   gradingConfig   GradingConfig       @relation(fields: [gradingConfigId], references: [id])
   assignments     TeacherAssignment[]
+  remedialSessions RemedialSession[]
+  indicators      Indicator[]
 }
 
 model TeacherAssignment {
@@ -114,6 +227,7 @@ model AcademicYear {
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
   periods   AcademicPeriod[]
+  enrollments Enrollment[]
 }
 
 model AcademicPeriod {
@@ -127,6 +241,7 @@ model AcademicPeriod {
   academicYear   AcademicYear    @relation(fields: [academicYearId], references: [id])
   accessRequests AccessRequest[]
   grades         Grade[]
+  indicators     Indicator[]
 }
 
 model AccessRequest {
@@ -151,6 +266,15 @@ model SchoolInfo {
   phone               String?
   email               String?
   rectorName          String?
+  license             String?   // Licencia de funcionamiento
+  legalStatus         String?   // Personería Jurídica
+  
+  // --- Datos DANE / Institucionales ---
+  daneCode            String?   // Código DANE 12 dígitos
+  calendar            String    @default("A") // Calendario A o B
+  sector              String    @default("NO_OFICIAL") // OFICIAL o NO_OFICIAL
+  consecutivoMatricula Int      @default(1)
+  
   logo                String?
   updatedAt           DateTime @updatedAt
   alertThreshold      Float    @default(3.0)
@@ -406,4 +530,72 @@ model AuditLog {
   details   String?
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id])
+}
+
+// --- Módulo de Tesorería ---
+
+model FeeType {
+  id          String    @id @default(cuid())
+  name        String    // Ej: "Pensión Mensual", "Matrícula"
+  amount      Float
+  description String?
+  invoices    Invoice[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Invoice {
+  id        String        @id @default(cuid())
+  studentId String
+  feeTypeId String
+  amount    Float         // Amount to be paid
+  dueDate   DateTime
+  status    InvoiceStatus @default(PENDING)
+  month     Int?          // 1-12
+  year      Int?
+  notes     String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  student  Student   @relation(fields: [studentId], references: [id])
+  feeType  FeeType   @relation(fields: [feeTypeId], references: [id])
+  payments Payment[]
+
+  @@unique([studentId, feeTypeId, month, year])
+}
+
+model Payment {
+  id        String      @id @default(cuid())
+  invoiceId String
+  amount    Float       // Amount paid
+  method    String      @default("CASH") // CASH, TRANSFER, CARD
+  reference String?     // Bank reference or receipt number
+  date      DateTime    @default(now())
+  notes     String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+}
+
+enum InvoiceStatus {
+  PENDING
+  PARTIAL
+  PAID
+  OVERDUE
+}
+
+// --- Módulo de Boletines e Informes ---
+
+model Indicator {
+  id               String          @id @default(cuid())
+  subjectId        String
+  periodId         String
+  performanceLevel String          // Superior, Alto, Básico, Bajo
+  description      String          @db.Text
+  
+  subject          Subject         @relation(fields: [subjectId], references: [id])
+  period           AcademicPeriod  @relation(fields: [periodId], references: [id])
+
+  @@unique([subjectId, periodId, performanceLevel])
 }

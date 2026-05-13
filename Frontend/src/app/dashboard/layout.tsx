@@ -24,7 +24,10 @@ import {
   CheckCircle,
   Clock,
   Menu,
-  X
+  ShieldCheck,
+  X,
+  DollarSign,
+  FileCheck
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { TopBarInfo } from "../components/TopBarInfo";
@@ -133,6 +136,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </Link>
           )}
 
+          {role === "ADMIN" && (
+            <Link href="/dashboard/tesoreria" className={`nav-item ${pathname.includes('/tesoreria') ? 'active' : ''}`}>
+              <DollarSign size={20} />
+              <span>Tesorería</span>
+            </Link>
+          )}
+
 
           {role === "ADMIN" && (
             <Link href="/dashboard/academico" className={`nav-item ${pathname.includes('/academico') ? 'active' : ''}`}>
@@ -142,11 +152,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           )}
 
           {role === "ADMIN" && (
-            <Link href="/dashboard/asignaciones" className={`nav-item ${pathname.includes('/asignaciones') ? 'active' : ''}`}>
-              <UserCheck size={20} />
-              <span>Asignaciones</span>
+            <Link href="/dashboard/matriculas" className={`nav-item ${pathname.includes('/matriculas') ? 'active' : ''}`}>
+              <FileCheck size={20} />
+              <span>Matrículas</span>
             </Link>
           )}
+
 
           {role === "STUDENT" && (
             <Link href="/dashboard/notas" className={`nav-item ${pathname.includes('/notas') ? 'active' : ''}`}>
@@ -163,11 +174,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           )}
 
           {role === "ADMIN" && (
-            <Link href="/dashboard/reportes" className={`nav-item ${pathname.includes('/reportes') ? 'active' : ''}`}>
+            <Link href="/dashboard/reportes" className={`nav-item ${pathname.includes('/reportes') && !pathname.includes('/reportes-oficiales') ? 'active' : ''}`}>
               <FileText size={20} />
-              <span>Reportes</span>
+              <span>Reportes y Boletines</span>
             </Link>
           )}
+
+          {role === "ADMIN" && (
+            <Link href="/dashboard/reportes-oficiales" className={`nav-item ${pathname.includes('/reportes-oficiales') ? 'active' : ''}`}>
+              <ShieldCheck size={20} />
+              <span>Reportes Oficiales</span>
+            </Link>
+          )}
+
 
           {(role === "ADMIN" || role === "TEACHER") && (
             <Link href="/dashboard/asistencia" className={`nav-item ${pathname.includes('/asistencia') ? 'active' : ''}`}>

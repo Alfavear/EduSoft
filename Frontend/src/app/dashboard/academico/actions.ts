@@ -64,11 +64,11 @@ export async function createSubject(data: { name: string, gradingConfigId: strin
 }
 
 export async function getAcademicData() {
-  const [courses, subjects, gradingConfigs, teachers] = await Promise.all([
+  const [courses, subjects, gradingConfigs, teachers, assignments] = await Promise.all([
     prisma.course.findMany({ 
       include: { 
         _count: { select: { students: true } },
-        director: true
+        director: { include: { user: true } }
       },
       orderBy: { name: 'asc' }
     }),
@@ -80,14 +80,24 @@ export async function getAcademicData() {
       orderBy: { name: 'asc' }
     }),
     prisma.teacher.findMany({
+      include: { user: true },
       orderBy: [
         { lastName: 'asc' },
         { firstName: 'asc' }
       ]
+    }),
+    prisma.teacherAssignment.findMany({
+      include: {
+        teacher: { include: { user: true } },
+        subject: true,
+        course: true
+      },
+      orderBy: { course: { name: 'asc' } }
     })
   ]);
-  return { courses, subjects, gradingConfigs, teachers };
+  return { courses, subjects, gradingConfigs, teachers, assignments };
 }
+
 
 export async function createGradingConfig(data: { name: string, type: string, minValue?: number, maxValue?: number, allowedValues?: string }) {
   try {
@@ -107,3 +117,28 @@ export async function createGradingConfig(data: { name: string, type: string, mi
     return { success: false, error: "Error al crear esquema de calificación." };
   }
 }
+
+export async function createAssignment(data: { teacherId: string, subjectId: string, courseId: string }) {
+  try {
+    const assignment = await prisma.teacherAssignment.create({
+      data
+    });
+    revalidatePath("/dashboard/academico");
+    return { success: true, data: assignment };
+  } catch (error) {
+    console.error("Error creating assignment:", error);
+    return { success: false, error: "Error al crear la asignación académica." };
+  }
+}
+
+export async function deleteAssignment(id: string) {
+  try {
+    await prisma.teacherAssignment.delete({ where: { id } });
+    revalidatePath("/dashboard/academico");
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting assignment:", error);
+    return { success: false, error: "Error al eliminar la asignación." };
+  }
+}
+

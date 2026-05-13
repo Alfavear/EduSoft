@@ -8,7 +8,7 @@ export function UserForm({ courses }: { courses: any[] }) {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
-    role: "STUDENT" as "ADMIN" | "TEACHER" | "STUDENT",
+    role: "TEACHER" as "ADMIN" | "TEACHER",
     firstName: "",
     lastName: "",
     documentId: "",
@@ -32,11 +32,6 @@ export function UserForm({ courses }: { courses: any[] }) {
     setSuccess("");
     setIsLoading(true);
 
-    if (formData.role === "STUDENT" && !formData.courseId) {
-      setError("Los estudiantes deben estar asignados a un curso.");
-      setIsLoading(false);
-      return;
-    }
 
     const res = await createUser(formData);
     
@@ -155,7 +150,6 @@ export function UserForm({ courses }: { courses: any[] }) {
                 onChange={e => setFormData({...formData, role: e.target.value as any})}
                 style={{ width: '100%', padding: '0.625rem', borderRadius: 'var(--radius)', border: '1px solid var(--border-light)', backgroundColor: 'white' }}
               >
-                <option value="STUDENT">Estudiante</option>
                 <option value="TEACHER">Docente</option>
                 <option value="ADMIN">Administrativo</option>
               </select>
@@ -175,88 +169,6 @@ export function UserForm({ courses }: { courses: any[] }) {
           </div>
         </div>
 
-        {formData.role === "STUDENT" && (
-          <div style={{ padding: '1.5rem', backgroundColor: 'rgba(59, 130, 246, 0.05)', borderRadius: 'var(--radius)', border: '1px solid rgba(59, 130, 246, 0.1)' }}>
-            <h3 style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--color-primary)', marginBottom: '1rem' }}>Datos de Matrícula y Acudiente</h3>
-            
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>Asignar a Curso *</label>
-                <select 
-                  value={formData.courseId} 
-                  onChange={e => setFormData({...formData, courseId: e.target.value})}
-                  style={{ width: '100%', padding: '0.625rem', borderRadius: 'var(--radius)', border: '1px solid var(--border-light)', backgroundColor: 'white' }}
-                  required
-                >
-                  <option value="">Seleccionar curso...</option>
-                  {courses.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                </select>
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>Fecha Nacimiento</label>
-                <input 
-                  type="date" 
-                  value={formData.birthDate} 
-                  onChange={e => setFormData({...formData, birthDate: e.target.value})} 
-                  style={{ width: '100%', padding: '0.625rem', borderRadius: 'var(--radius)', border: '1px solid var(--border-light)' }} 
-                />
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>Tipo Sangre/EPS</label>
-                <input 
-                  type="text" 
-                  value={formData.bloodType} 
-                  onChange={e => setFormData({...formData, bloodType: e.target.value})} 
-                  style={{ width: '100%', padding: '0.625rem', borderRadius: 'var(--radius)', border: '1px solid var(--border-light)' }} 
-                />
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>Nombre Acudiente *</label>
-                <input 
-                  type="text" 
-                  value={formData.guardianName} 
-                  onChange={e => setFormData({...formData, guardianName: e.target.value})} 
-                  style={{ width: '100%', padding: '0.625rem', borderRadius: 'var(--radius)', border: '1px solid var(--border-light)' }} 
-                  required
-                />
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>Teléfono Acudiente *</label>
-                <input 
-                  type="tel" 
-                  value={formData.guardianPhone} 
-                  onChange={e => setFormData({...formData, guardianPhone: e.target.value})} 
-                  style={{ width: '100%', padding: '0.625rem', borderRadius: 'var(--radius)', border: '1px solid var(--border-light)' }} 
-                  required
-                />
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>Correo Acudiente</label>
-                <input 
-                  type="email" 
-                  value={formData.guardianEmail} 
-                  onChange={e => setFormData({...formData, guardianEmail: e.target.value})} 
-                  style={{ width: '100%', padding: '0.625rem', borderRadius: 'var(--radius)', border: '1px solid var(--border-light)' }} 
-                />
-              </div>
-              
-              <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>Dirección Residencia</label>
-                <input 
-                  type="text" 
-                  value={formData.address} 
-                  onChange={e => setFormData({...formData, address: e.target.value})} 
-                  style={{ width: '100%', padding: '0.625rem', borderRadius: 'var(--radius)', border: '1px solid var(--border-light)' }} 
-                />
-              </div>
-            </div>
-          </div>
-        )}
 
         {formData.role === "TEACHER" && (
           <div style={{ padding: '1.5rem', backgroundColor: 'rgba(20, 184, 166, 0.05)', borderRadius: 'var(--radius)', border: '1px solid rgba(20, 184, 166, 0.1)' }}>

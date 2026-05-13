@@ -11,7 +11,8 @@ import {
   Calendar,
   ChevronRight,
   TrendingDown,
-  Star
+  Star,
+  DollarSign
 } from "lucide-react";
 import { getDashboardData, getTeacherDashboardData, getStudentDashboardData } from "./dashboardActions";
 import Link from "next/link";
@@ -67,6 +68,16 @@ export default async function DashboardPage() {
               <span className="number">{data.criticalSubject.average > 0 ? data.criticalSubject.average.toFixed(1) : "N/A"}</span>
               <span className="label">Materia Crítica: {data.criticalSubject.name}</span>
               <TrendingDown size={48} opacity={0.2} style={{ position: 'absolute', right: '1rem', bottom: '1rem' }} />
+            </div>
+            <div className="widget-stat" style={{ backgroundColor: '#2563eb' }}>
+              <span className="number">${(data.revenue / 1000000).toFixed(1)}M</span>
+              <span className="label">Recaudo Total</span>
+              <DollarSign size={48} opacity={0.2} style={{ position: 'absolute', right: '1rem', bottom: '1rem' }} />
+            </div>
+            <div className="widget-stat" style={{ backgroundColor: '#dc2626' }}>
+              <span className="number">{data.pendingInvoices}</span>
+              <span className="label">Facturas Pendientes</span>
+              <Clock size={48} opacity={0.2} style={{ position: 'absolute', right: '1rem', bottom: '1rem' }} />
             </div>
           </div>
 
