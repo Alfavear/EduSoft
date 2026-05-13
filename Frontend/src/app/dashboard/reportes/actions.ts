@@ -272,3 +272,55 @@ export async function getExcellenceReport() {
   .sort((a, b) => b.average - a.average)
   .slice(0, 10);
 }
+
+/**
+ * Obtiene el informe de riesgo académico de un estudiante en particular.
+ */
+export async function getAcademicRiskReport(studentId: string) {
+  const student = await prisma.student.findUnique({
+    where: { id: studentId },
+    include: {
+      course: true,
+      grades: {
+        include: {
+          assignment: {
+            include: { subject: true, teacher: true }
+          },
+          period: true
+        }
+      },
+      attendances: true
+    }
+  });
+
+  if (!student) return null;
+
+  const totalDays = student.attendances.length;
+  const absences = student.attendances.filter(a => a.status === "ABSENT").length;
+  const absenceRate = totalDays > 0 ? (absences / totalDays) * 100 : 0;
+
+  const failingGrades = student.grades
+    .map(g => ({
+      subject: g.assignment.subject.name,
+      teacher: `${g.assignment.teacher.firstName} ${g.assignment.teacher.lastName}`,
+      period: g.period.name,
+      value: parseFloat(g.value) || 0
+    }))
+    .filter(g => g.value > 0 && g.value < 3.0)
+    .sort((a, b) => a.value - b.value); // Peores notas primero
+
+  const totalGrades = student.grades.filter(g => !isNaN(parseFloat(g.value))).map(g => parseFloat(g.value));
+  const average = totalGrades.length > 0 ? (totalGrades.reduce((a, b) => a + b, 0) / totalGrades.length).toFixed(2) : "0.0";
+
+  return {
+    id: student.id,
+    firstName: student.firstName,
+    lastName: student.lastName,
+    documentId: student.documentId,
+    course: student.course.name,
+    average,
+    absenceCount: absences,
+    absenceRate,
+    failingGrades
+  };
+}

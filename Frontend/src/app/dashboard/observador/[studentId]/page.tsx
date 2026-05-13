@@ -1,5 +1,7 @@
 import { getStudentObserverData, getCurrentTeacher } from "../observadorActions";
 import { notFound, redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { 
   User, 
   Calendar, 
@@ -24,9 +26,10 @@ export default async function StudentObserverPage({ params }: { params: Promise<
   const { studentId } = await params;
   const student = await getStudentObserverData(studentId);
   const teacher = await getCurrentTeacher();
+  const session = await getServerSession(authOptions);
 
   if (!student) notFound();
-  if (!teacher) redirect("/login");
+  if (!teacher && session?.user?.role !== "ADMIN") redirect("/login");
 
   return (
     <div className="container" style={{ padding: '2rem', maxWidth: '1400px', margin: '0 auto' }}>
@@ -195,8 +198,16 @@ export default async function StudentObserverPage({ params }: { params: Promise<
             </h3>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <ObservationForm studentId={student.id} teacherId={teacher.id} />
-              <MeetingForm studentId={student.id} teacherId={teacher.id} />
+              {teacher ? (
+                <>
+                  <ObservationForm studentId={student.id} teacherId={teacher.id} />
+                  <MeetingForm studentId={student.id} teacherId={teacher.id} />
+                </>
+              ) : (
+                <div style={{ padding: '1rem', backgroundColor: 'var(--bg-app)', borderRadius: '0.5rem', fontSize: '0.85rem', color: 'var(--text-muted)', textAlign: 'center', border: '1px dashed var(--border-light)' }}>
+                  Visualizando como Administrador. Sólo los docentes pueden registrar observaciones directas.
+                </div>
+              )}
               <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '1rem', marginTop: '0.5rem' }}>
                 <ConditionalToggle studentId={student.id} initialStatus={student.isConditional} />
               </div>

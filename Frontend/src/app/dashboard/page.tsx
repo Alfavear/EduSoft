@@ -110,8 +110,9 @@ export default async function DashboardPage() {
                               {s.average.toFixed(2)}
                             </span>
                           </td>
-                          <td style={{ padding: '1rem', textAlign: 'center' }}>
-                            <Link href={`/dashboard/observador/${s.id}`} style={{ color: 'var(--color-primary)', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 'bold' }}>Ir al Observador</Link>
+                          <td style={{ padding: '1rem', textAlign: 'center', display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+                            <Link href={`/dashboard/reportes/riesgo/${s.id}`} style={{ padding: '0.4rem 0.8rem', backgroundColor: 'rgba(239, 68, 68, 0.1)', color: 'var(--color-danger)', borderRadius: '0.5rem', textDecoration: 'none', fontSize: '0.75rem', fontWeight: 'bold', border: '1px solid rgba(239, 68, 68, 0.2)' }}>Ver Informe Académico</Link>
+                            <Link href={`/dashboard/observador/${s.id}`} style={{ padding: '0.4rem 0.8rem', backgroundColor: 'rgba(59, 130, 246, 0.1)', color: 'var(--color-primary)', borderRadius: '0.5rem', textDecoration: 'none', fontSize: '0.75rem', fontWeight: 'bold', border: '1px solid rgba(59, 130, 246, 0.2)' }}>Ir al Observador</Link>
                           </td>
                         </tr>
                       ))
